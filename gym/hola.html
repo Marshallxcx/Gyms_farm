@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeMMO Gym Tracker Pro - Full 8 Leaders</title>
+    <style>
+        :root {
+            --primary: #c1121f;
+            --secondary: #003049;
+            --accent: #669bbc;
+            --bg: #fdf0d5;
+            --white: #ffffff;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 15px;
+        }
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 20px;
+            max-width: 1600px;
+            margin: auto;
+        }
+        @media (max-width: 1100px) {
+            .main-layout { grid-template-columns: 1fr; }
+        }
+        .card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .calculator {
+            background: var(--secondary);
+            color: white;
+            text-align: center;
+        }
+        input[type="time"] {
+            padding: 12px;
+            font-size: 1.3rem;
+            border-radius: 8px;
+            border: none;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        #result {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffb703;
+            display: block;
+            margin-top: 10px;
+        }
+        .pdf-container {
+            height: 90vh;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 3px solid var(--secondary);
+            position: sticky;
+            top: 15px;
+        }
+        iframe { width: 100%; height: 100%; border: none; }
+        .table-scroll {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+        th { background: var(--primary); color: white; position: sticky; top: 0; }
+        .region-header {
+            background: #780000;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+        }
+        .reset-note { color: #c1121f; font-weight: bold; font-size: 0.75rem; }
+        .new-gym { color: #2a9d8f; font-weight: bold; } /* Marca para los añadidos */
+    </style>
+</head>
+<body>
+
+    <h1 style="text-align:center; color: var(--secondary); margin-bottom: 20px;">PokeMMO Farm Dashboard (8 Medallas por Región)</h1>
+
+    <div class="main-layout">
+        
+        <div class="content">
+            <div class="card calculator">
+                <h3>Calculadora de Cooldown (+18h)</h3>
+                <p>Ingresa la hora en que terminaste:</p>
+                <input type="time" id="inputTime" onchange="calc18h()">
+                <div id="result">Próximo: --:-- --</div>
+            </div>
+
+            <div class="card">
+                <h3>Checklist de Gimnasios</h3>
+                <div class="table-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>✓</th>
+                                <th>Gimnasio</th>
+                                <th>Estrategia Principal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="region-header"><td colspan="3">KANTO</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Plateada (Brock)</td><td>Arch/Blast</td></tr>
+                            <tr><td><input type="checkbox"></td><td class="new-gym">Celeste (Misty)</td><td>2x Typh o Arch/Blast</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Carmín (Lt. Surge)</td><td>2x Typh (Si Lluvia -> Tork)</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Azulona (Erika)</td><td>2x Typh <span class="reset-note">[RESET PC]</span></td></tr>
+                            <tr><td><input type="checkbox"></td><td class="new-gym">Fucsia (Koga)</td><td>Tork/Scarf a Gafas/Arch</td></tr>
+                            <tr><td><input type="checkbox"></td><td class="new-gym">Azafrán (Sabrina)</td><td>2x Typhlosion</td></tr>
+                            <tr><td><input type="checkbox"></td><td class="new-gym">Canela (Blaine)</td><td>Arch/Blast</td></tr>
+                            <tr><td><input type="checkbox"></td><td class="new-gym">Verde (Azul)</td><td>Tork/Scarf a Gafas/Arch</td></tr>
+
+                            <tr class="region-header"><td colspan="3">JOHTO</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Violeta (Pegaso)</td><td>Scarf/Blast</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Azalea (Antón)</td><td>2x Typh <span class="reset-note">[CANAL]</span></td></tr>
+                            <tr><td><input type="checkbox"></td><td>Trigal (Blanca)</td><td>Gafas/Arch</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Iris (Morti)</td><td>Gafas/Arch</td></tr>
+                            <tr><td><input type="checkbox"></td><td class="new-gym">Orquídea (Aníbal)</td><td>Scarf/Arch</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Olivo (Yasmina)</td><td>Gafas/Arch</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Caoba (Fredo)</td><td>2x Typh <span class="reset-note">[RESET PC]</span></td></tr>
+                            <tr><td><input type="checkbox"></td><td>Endrino (Débora)</td><td>Tork/Scarf a Gafas/Arch</td></tr>
+
+                            <tr class="region-header"><td colspan="3">HOENN</td></tr>
+                            <tr><td><input type="checkbox"></td><td class="new-gym">Férrica (Petra)</td><td>Arch/Blast</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Azuliza (Marcial)</td><td>Scarf/Arch</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Malvalona (Erico)</td><td>Scarf/Blast</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Lavacalda (Candela)</td><td>Arch/Blast</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Petalia (Norman)</td><td>Tork/Scarf a Gafas/Arch <span class="reset-note">[RESET PC]</span></td></tr>
+                            <tr><td><input type="checkbox"></td><td>Arborada (Alana)</td><td>Arch/Gafas <span class="reset-note">[RESET PC]</span></td></tr>
+                            <tr><td><input type="checkbox"></td><td class="new-gym">Algararia (Vito/Leti)</td><td>2x Typhlosion</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Arrecípolis (Plubio)</td><td>Tork/Scarf a Gafas/Arch</td></tr>
+
+                            <tr class="region-header"><td colspan="3">SINNOH</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Pirita (Roco)</td><td>Arch/Blast</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Vetusta (Gardenia)</td><td>Scarf/Arch</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Rocavelo (Brega)</td><td>Gafas/Arch <span class="reset-note">[RESET PC]</span></td></tr>
+                            <tr><td><input type="checkbox"></td><td>Pradera (Mananti)</td><td>Tork/Arch -> 2x Typh</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Corazón (Fantina)</td><td>Gafas/Arch</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Canal (Acerón)</td><td>Tork/Scarf a Gafas/Blast <span class="reset-note">[RESET PC]</span></td></tr>
+                            <tr><td><input type="checkbox"></td><td>Puntaneva (Inverna)</td><td>2x Typh (Si Heatran -> Blast)</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Marina (Lectro)</td><td>Arch/Blast</td></tr>
+
+                            <tr class="region-header"><td colspan="3">TESELIA</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Gres (Trío)</td><td>Gafas/Blast | Scarf/Arch | Tork/Arch</td></tr>
+                            <tr><td><input type="checkbox"></td><td class="new-gym">Hormigón (Hiedra)</td><td>Tork/Scarf a Gafas/Arch</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Porcelana (Camus)</td><td>Scarf/Blast</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Mayólica (Camila)</td><td>Scarf/Arch</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Fayenza (Yakón)</td><td>Tork/Scarf a Gafas/Blast <span class="reset-note">[RESET PC]</span></td></tr>
+                            <tr><td><input type="checkbox"></td><td>Loza (Gerania)</td><td>Scarf/Blast</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Teja (Junco)</td><td>2x Typh</td></tr>
+                            <tr><td><input type="checkbox"></td><td>Caolín (Lirio/Iris)</td><td>Tork/Arch -> 2x Typh <span class="reset-note">[RESET PC]</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="pdf-container">
+            <iframe src="RUTA DE FARMEO_GYM_POKEMMO.pdf"></iframe>
+        </div>
+
+    </div>
+
+    <script>
+        function calc18h() {
+            const timeVal = document.getElementById('inputTime').value;
+            if (!timeVal) return;
+
+            let [hours, minutes] = timeVal.split(':').map(Number);
+            let newHours = (hours + 18) % 24;
+            
+            let period = newHours >= 12 ? 'PM' : 'AM';
+            let hours12 = newHours % 12;
+            hours12 = hours12 ? hours12 : 12; 
+            
+            let minStr = minutes < 10 ? '0' + minutes : minutes;
+            
+            document.getElementById('result').innerText = 
+                `Próximo: ${hours12}:${minStr} ${period}`;
+        }
+    </script>
+</body>
+</html>
