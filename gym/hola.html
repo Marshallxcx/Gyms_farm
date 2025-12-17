@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeMMO Gym Tracker Pro - Full 8 Leaders</title>
+    <title>PokeMMO Gym Tracker Pro - Paxpo Full Route</title>
     <style>
         :root {
             --primary: #c1121f;
@@ -77,95 +77,73 @@
             padding: 10px;
             border-bottom: 1px solid #eee;
             text-align: left;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
         }
-        th { background: var(--primary); color: white; position: sticky; top: 0; }
+        th { background: var(--primary); color: white; position: sticky; top: 0; z-index: 10; }
         .region-header {
             background: #780000;
             color: white;
             font-weight: bold;
             text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
-        .reset-note { color: #c1121f; font-weight: bold; font-size: 0.75rem; }
-        .new-gym { color: #2a9d8f; font-weight: bold; } /* Marca para los añadidos */
+        .reset-note { color: #c1121f; font-weight: bold; font-size: 0.65rem; display: block; margin-top: 2px; }
+        .warning-note { color: #f3722c; font-weight: bold; font-size: 0.65rem; }
+        .poke-icon-wrapper {
+            display: inline-flex;
+            align-items: center;
+            position: relative;
+            margin-right: 5px;
+        }
+        .poke-icon {
+            width: 28px;
+            height: 28px;
+        }
+        .item-overlay {
+            width: 12px;
+            height: 12px;
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            border: 1px solid #ccc;
+        }
+        .strat-cell {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
     </style>
 </head>
 <body>
 
-    <h1 style="text-align:center; color: var(--secondary); margin-bottom: 20px;">PokeMMO Farm Dashboard (8 Medallas por Región)</h1>
+    <h1 style="text-align:center; color: var(--secondary); margin-bottom: 20px;">PokeMMO Farm Dashboard - Ruta Completa Paxpo</h1>
 
     <div class="main-layout">
         
         <div class="content">
             <div class="card calculator">
                 <h3>Calculadora de Cooldown (+18h)</h3>
-                <p>Ingresa la hora en que terminaste:</p>
+                <p>Hora de finalización:</p>
                 <input type="time" id="inputTime" onchange="calc18h()">
                 <div id="result">Próximo: --:-- --</div>
             </div>
 
             <div class="card">
-                <h3>Checklist de Gimnasios</h3>
+                <h3>Checklist de Gimnasios (Ruta PDF)</h3>
                 <div class="table-scroll">
                     <table>
                         <thead>
                             <tr>
                                 <th>✓</th>
                                 <th>Gimnasio</th>
-                                <th>Estrategia Principal</th>
+                                <th>Estrategia Paxpo</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr class="region-header"><td colspan="3">KANTO</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Plateada (Brock)</td><td>Arch/Blast</td></tr>
-                            <tr><td><input type="checkbox"></td><td class="new-gym">Celeste (Misty)</td><td>2x Typh o Arch/Blast</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Carmín (Lt. Surge)</td><td>2x Typh (Si Lluvia -> Tork)</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Azulona (Erika)</td><td>2x Typh <span class="reset-note">[RESET PC]</span></td></tr>
-                            <tr><td><input type="checkbox"></td><td class="new-gym">Fucsia (Koga)</td><td>Tork/Scarf a Gafas/Arch</td></tr>
-                            <tr><td><input type="checkbox"></td><td class="new-gym">Azafrán (Sabrina)</td><td>2x Typhlosion</td></tr>
-                            <tr><td><input type="checkbox"></td><td class="new-gym">Canela (Blaine)</td><td>Arch/Blast</td></tr>
-                            <tr><td><input type="checkbox"></td><td class="new-gym">Verde (Azul)</td><td>Tork/Scarf a Gafas/Arch</td></tr>
-
-                            <tr class="region-header"><td colspan="3">JOHTO</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Violeta (Pegaso)</td><td>Scarf/Blast</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Azalea (Antón)</td><td>2x Typh <span class="reset-note">[CANAL]</span></td></tr>
-                            <tr><td><input type="checkbox"></td><td>Trigal (Blanca)</td><td>Gafas/Arch</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Iris (Morti)</td><td>Gafas/Arch</td></tr>
-                            <tr><td><input type="checkbox"></td><td class="new-gym">Orquídea (Aníbal)</td><td>Scarf/Arch</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Olivo (Yasmina)</td><td>Gafas/Arch</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Caoba (Fredo)</td><td>2x Typh <span class="reset-note">[RESET PC]</span></td></tr>
-                            <tr><td><input type="checkbox"></td><td>Endrino (Débora)</td><td>Tork/Scarf a Gafas/Arch</td></tr>
-
-                            <tr class="region-header"><td colspan="3">HOENN</td></tr>
-                            <tr><td><input type="checkbox"></td><td class="new-gym">Férrica (Petra)</td><td>Arch/Blast</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Azuliza (Marcial)</td><td>Scarf/Arch</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Malvalona (Erico)</td><td>Scarf/Blast</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Lavacalda (Candela)</td><td>Arch/Blast</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Petalia (Norman)</td><td>Tork/Scarf a Gafas/Arch <span class="reset-note">[RESET PC]</span></td></tr>
-                            <tr><td><input type="checkbox"></td><td>Arborada (Alana)</td><td>Arch/Gafas <span class="reset-note">[RESET PC]</span></td></tr>
-                            <tr><td><input type="checkbox"></td><td class="new-gym">Algararia (Vito/Leti)</td><td>2x Typhlosion</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Arrecípolis (Plubio)</td><td>Tork/Scarf a Gafas/Arch</td></tr>
-
-                            <tr class="region-header"><td colspan="3">SINNOH</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Pirita (Roco)</td><td>Arch/Blast</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Vetusta (Gardenia)</td><td>Scarf/Arch</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Rocavelo (Brega)</td><td>Gafas/Arch <span class="reset-note">[RESET PC]</span></td></tr>
-                            <tr><td><input type="checkbox"></td><td>Pradera (Mananti)</td><td>Tork/Arch -> 2x Typh</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Corazón (Fantina)</td><td>Gafas/Arch</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Canal (Acerón)</td><td>Tork/Scarf a Gafas/Blast <span class="reset-note">[RESET PC]</span></td></tr>
-                            <tr><td><input type="checkbox"></td><td>Puntaneva (Inverna)</td><td>2x Typh (Si Heatran -> Blast)</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Marina (Lectro)</td><td>Arch/Blast</td></tr>
-
-                            <tr class="region-header"><td colspan="3">TESELIA</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Gres (Trío)</td><td>Gafas/Blast | Scarf/Arch | Tork/Arch</td></tr>
-                            <tr><td><input type="checkbox"></td><td class="new-gym">Hormigón (Hiedra)</td><td>Tork/Scarf a Gafas/Arch</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Porcelana (Camus)</td><td>Scarf/Blast</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Mayólica (Camila)</td><td>Scarf/Arch</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Fayenza (Yakón)</td><td>Tork/Scarf a Gafas/Blast <span class="reset-note">[RESET PC]</span></td></tr>
-                            <tr><td><input type="checkbox"></td><td>Loza (Gerania)</td><td>Scarf/Blast</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Teja (Junco)</td><td>2x Typh</td></tr>
-                            <tr><td><input type="checkbox"></td><td>Caolín (Lirio/Iris)</td><td>Tork/Arch -> 2x Typh <span class="reset-note">[RESET PC]</span></td></tr>
-                        </tbody>
+                        <tbody id="gym-table-body">
+                            </tbody>
                     </table>
                 </div>
             </div>
@@ -174,25 +152,115 @@
         <div class="pdf-container">
             <iframe src="RUTA DE FARMEO_GYM_POKEMMO.pdf"></iframe>
         </div>
-
     </div>
 
     <script>
+        const POKES = {
+            tork: { name: 'Torkoal', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/324.png' },
+            blast: { name: 'Blastoise', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/9.png' },
+            arch: { name: 'Archeops', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/567.png' },
+            typh_gafas: { name: 'Typhlosion (Gafas)', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/157.png', item: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/choice-specs.png' },
+            typh_scarf: { name: 'Typhlosion (Scarf)', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/157.png', item: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/choice-scarf.png' }
+        };
+
+        function getPokeHTML(pokeKey) {
+            const p = POKES[pokeKey];
+            if(!p) return '';
+            let itemHTML = p.item ? `<img src="${p.item}" class="item-overlay">` : '';
+            return `<div class="poke-icon-wrapper" title="${p.name}">
+                        <img src="${p.img}" class="poke-icon">
+                        ${itemHTML}
+                    </div>`;
+        }
+
+        const gymData = [
+            { region: 'HOENN', gyms: [
+                { name: 'Arrecípolis (Plubio)', pokes: ['tork', 'typh_gafas'], note: 'Tork/Scarf a Gafas/Arch' },
+                { name: 'Lavacalda (Candela)', pokes: ['arch', 'blast'], note: 'Arch/Blast' },
+                { name: 'Arborada (Alana)', pokes: ['arch', 'typh_gafas'], note: 'Arch/Gafas - RESET PC' },
+                { name: 'Malvalona (Erico)', pokes: ['typh_scarf', 'blast'], note: 'Scarf/Blast (Si cae Scarf -> Arch + RESET)' },
+                { name: 'Azuliza (Marcial)', pokes: ['typh_scarf', 'arch'], note: 'Scarf/Arch' },
+                { name: 'Petalia (Norman)', pokes: ['tork', 'typh_gafas'], note: 'Tork/Scarf a Gafas/Arch - RESET PC' },
+                { name: 'Férrica (Petra)', pokes: ['arch', 'blast'], note: 'Estrategia mixta' },
+                { name: 'Algararia (Vito/Leti)', pokes: ['typh_gafas', 'typh_gafas'], note: '2x Typhlosion' }
+            ]},
+            { region: 'TESELIA', gyms: [
+                { name: 'Porcelana (Camus)', pokes: ['typh_scarf', 'blast'], note: 'Scarf/Blast' },
+                { name: 'Mayólica (Camila)', pokes: ['typh_scarf', 'arch'], note: 'Scarf/Arch' },
+                { name: 'Fayenza (Yakón)', pokes: ['tork', 'blast'], note: 'Tork/Scarf a Gafas/Blast - RESET PC' },
+                { name: 'Gres (Fuego)', pokes: ['typh_gafas', 'blast'], note: 'Gafas/Blast' },
+                { name: 'Gres (Planta)', pokes: ['typh_scarf', 'arch'], note: 'Scarf/Arch' },
+                { name: 'Gres (Agua)', pokes: ['tork', 'arch'], note: 'Tork/Arch -> 2x Typh - RESET PC' },
+                { name: 'Loza (Gerania)', pokes: ['typh_scarf', 'blast'], note: 'Scarf/Blast' },
+                { name: 'Teja (Junco)', pokes: ['typh_gafas', 'typh_gafas'], note: '2x Typh' },
+                { name: 'Caolín (Lirio/Iris)', pokes: ['tork', 'arch'], note: 'VIENTO AFORTUNADO -> 2x Typh - RESET PC' },
+                { name: 'Hormigón (Hiedra)', pokes: ['tork', 'typh_gafas'], note: 'Tork/Scarf a Gafas/Arch' }
+            ]},
+            { region: 'JOHTO', gyms: [
+                { name: 'Violeta (Pegaso)', pokes: ['typh_scarf', 'blast'], note: 'Scarf/Blast' },
+                { name: 'Olivo (Yasmina)', pokes: ['typh_gafas', 'arch'], note: 'Gafas/Arch' },
+                { name: 'Azalea (Antón)', pokes: ['typh_gafas', 'typh_gafas'], note: '2x Typh (Si Tyranitar -> Tork EXPLOTA) - CAMBIAR CANAL' },
+                { name: 'Iris (Morti)', pokes: ['typh_gafas', 'arch'], note: 'Gafas/Arch' },
+                { name: 'Caoba (Fredo)', pokes: ['typh_gafas', 'typh_gafas'], note: '2x Typh - RESET PC' },
+                { name: 'Trigal (Blanca)', pokes: ['typh_gafas', 'arch'], note: 'Gafas/Arch' },
+                { name: 'Endrino (Débora)', pokes: ['tork', 'typh_gafas'], note: 'Tork/Scarf a Gafas/Arch' },
+                { name: 'Orquídea (Aníbal)', pokes: ['typh_scarf', 'arch'], note: 'Scarf/Arch' }
+            ]},
+            { region: 'SINNOH', gyms: [
+                { name: 'Rocavelo (Brega)', pokes: ['typh_gafas', 'arch'], note: 'Gafas/Arch - CAMBIAR CANAL - RESET PC' },
+                { name: 'Pirita (Roco)', pokes: ['arch', 'blast'], note: 'Arch/Blast (Si Arch cae -> Gafas)' },
+                { name: 'Vetusta (Gardenia)', pokes: ['typh_scarf', 'arch'], note: 'Scarf/Arch' },
+                { name: 'Puntaneva (Inverna)', pokes: ['typh_gafas', 'typh_gafas'], note: '2x Typh (Si Heatran/Regirock -> Blast/Arch)' },
+                { name: 'Canal (Acerón)', pokes: ['tork', 'blast'], note: 'Tork/Scarf a Gafas/Blast - DESCONECTAR - RESET PC' },
+                { name: 'Marina (Lectro)', pokes: ['arch', 'blast'], note: 'Arch/Blast (Si Lanturn -> Tork a Gafas)' },
+                { name: 'Corazón (Fantina)', pokes: ['typh_gafas', 'arch'], note: 'Gafas/Arch' },
+                { name: 'Pradera (Mananti)', pokes: ['tork', 'arch'], note: 'Tork/Arch -> 2x Typh - CAMBIAR CANAL' }
+            ]},
+            { region: 'KANTO', gyms: [
+                { name: 'Azulona (Erika)', pokes: ['typh_gafas', 'typh_gafas'], note: '2x Typh (Si cae -> Arch) - RESET PC' },
+                { name: 'Carmín (Lt. Surge)', pokes: ['typh_gafas', 'typh_gafas'], note: '2x Typh (Si Lluvia -> Tork)' },
+                { name: 'Plateada (Brock)', pokes: ['arch', 'blast'], note: 'Arch/Blast (Si Toxicroak -> Scarf)' },
+                { name: 'Celeste (Misty)', pokes: ['typh_gafas', 'typh_gafas'], note: 'Estrategia mixta' },
+                { name: 'Fucsia (Koga)', pokes: ['tork', 'typh_gafas'], note: 'Tork/Scarf a Gafas/Arch' },
+                { name: 'Azafrán (Sabrina)', pokes: ['typh_gafas', 'typh_gafas'], note: '2x Typhlosion' },
+                { name: 'Canela (Blaine)', pokes: ['arch', 'blast'], note: 'Arch/Blast' },
+                { name: 'Verde (Azul)', pokes: ['tork', 'typh_gafas'], note: 'Tork/Scarf a Gafas/Arch' }
+            ]}
+        ];
+
+        const tbody = document.getElementById('gym-table-body');
+        gymData.forEach(region => {
+            const header = document.createElement('tr');
+            header.className = 'region-header';
+            header.innerHTML = `<td colspan="3">${region.region}</td>`;
+            tbody.appendChild(header);
+
+            region.gyms.forEach(gym => {
+                const tr = document.createElement('tr');
+                const pokesHTML = gym.pokes.map(p => getPokeHTML(p)).join('');
+                tr.innerHTML = `
+                    <td><input type="checkbox"></td>
+                    <td>${gym.name}</td>
+                    <td>
+                        <div class="strat-cell">
+                            ${pokesHTML}
+                            <span class="reset-note">${gym.note}</span>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        });
+
         function calc18h() {
             const timeVal = document.getElementById('inputTime').value;
             if (!timeVal) return;
-
             let [hours, minutes] = timeVal.split(':').map(Number);
             let newHours = (hours + 18) % 24;
-            
             let period = newHours >= 12 ? 'PM' : 'AM';
-            let hours12 = newHours % 12;
-            hours12 = hours12 ? hours12 : 12; 
-            
+            let hours12 = newHours % 12 || 12; 
             let minStr = minutes < 10 ? '0' + minutes : minutes;
-            
-            document.getElementById('result').innerText = 
-                `Próximo: ${hours12}:${minStr} ${period}`;
+            document.getElementById('result').innerText = `Próximo: ${hours12}:${minStr} ${period}`;
         }
     </script>
 </body>
