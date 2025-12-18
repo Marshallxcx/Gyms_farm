@@ -3,265 +3,315 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeMMO Gym Tracker Pro - Paxpo Full Route</title>
+    <title>PokeMMO Gym Tracker - Dark Edition</title>
     <style>
-        :root {
-            --primary: #c1121f;
-            --secondary: #003049;
-            --accent: #669bbc;
-            --bg: #fdf0d5;
-            --white: #ffffff;
+        :root { 
+            /* Paleta Dark */
+            --primary: #ff4d4d; 
+            --secondary: #0f172a; 
+            --bg: #020617; 
+            --card-bg: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --accent: #fbbf24;
         }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            margin: 0;
-            padding: 15px;
+
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text-main);
+            padding: 15px; 
+            margin: 0; 
         }
-        .main-layout {
-            display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: 20px;
-            max-width: 1600px;
-            margin: auto;
+
+        .main-layout { 
+            display: grid; 
+            grid-template-columns: 1.2fr 1fr; 
+            gap: 20px; 
+            max-width: 1600px; 
+            margin: auto; 
         }
-        @media (max-width: 1100px) {
-            .main-layout { grid-template-columns: 1fr; }
+
+        @media (max-width: 1100px) { 
+            .main-layout { grid-template-columns: 1fr; } 
         }
-        .card {
-            background: var(--white);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+
+        .card { 
+            background: var(--card-bg); 
+            padding: 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); 
             margin-bottom: 20px;
+            border: 1px solid var(--border);
         }
-        .calculator {
-            background: var(--secondary);
-            color: white;
-            text-align: center;
+
+        .calculator { 
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); 
+            color: white; 
+            text-align: center; 
+            border: 1px solid var(--primary);
         }
+
+        #result { 
+            font-size: 2rem; 
+            font-weight: bold; 
+            color: var(--accent); 
+            display: block; 
+            margin-top: 10px; 
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+        }
+
         input[type="time"] {
-            padding: 12px;
-            font-size: 1.3rem;
-            border-radius: 8px;
-            border: none;
-            margin: 10px 0;
-            cursor: pointer;
-        }
-        #result {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #ffb703;
-            display: block;
-            margin-top: 10px;
-        }
-        .pdf-container {
-            height: 90vh;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 3px solid var(--secondary);
-            position: sticky;
-            top: 15px;
-        }
-        iframe { width: 100%; height: 100%; border: none; }
-        .table-scroll {
-            max-height: 70vh;
-            overflow-y: auto;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
-        th, td {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            text-align: left;
-            font-size: 0.82rem;
-        }
-        th { background: var(--primary); color: white; position: sticky; top: 0; z-index: 10; }
-        .region-header {
-            background: #780000;
+            background: #0f172a;
             color: white;
-            font-weight: bold;
-            text-align: center;
+            border: 1px solid var(--border);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            outline: none;
+        }
+
+        .table-scroll { 
+            max-height: 75vh; 
+            overflow-y: auto; 
+            border-radius: 8px; 
+            border: 1px solid var(--border);
+        }
+
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            background: var(--card-bg); 
+        }
+
+        th, td { 
+            padding: 12px; 
+            border-bottom: 1px solid var(--border); 
+            text-align: left; 
+            font-size: 0.85rem; 
+        }
+
+        th { 
+            background: #0f172a; 
+            color: var(--primary); 
+            position: sticky; 
+            top: 0; 
+            z-index: 10; 
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--primary);
         }
-        .reset-note { color: #c1121f; font-weight: bold; font-size: 0.65rem; display: block; margin-top: 2px; }
-        .warning-note { color: #f3722c; font-weight: bold; font-size: 0.65rem; }
-        .poke-icon-wrapper {
-            display: inline-flex;
-            align-items: center;
-            position: relative;
-            margin-right: 5px;
+
+        .region-header { 
+            background: #020617; 
+            color: var(--accent); 
+            font-weight: bold; 
+            text-align: center; 
+            font-size: 1rem;
         }
-        .poke-icon {
-            width: 28px;
-            height: 28px;
+
+        .note { 
+            color: var(--text-muted); 
+            font-size: 0.75rem; 
+            display: block; 
+            margin-top: 5px;
+            line-height: 1.4;
         }
-        .item-overlay {
-            width: 12px;
-            height: 12px;
-            position: absolute;
-            bottom: -2px;
-            right: -2px;
-            background: rgba(255,255,255,0.9);
+
+        .swap-alert { 
+            color: #ff4d4d; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            background: rgba(255, 77, 77, 0.1);
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+
+        .poke-icon-wrapper { 
+            display: inline-flex; 
+            position: relative; 
+            margin-right: 8px; 
+            background: rgba(255,255,255,0.05);
             border-radius: 50%;
-            border: 1px solid #ccc;
+            padding: 2px;
         }
-        .strat-cell {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
+
+        .poke-icon { width: 32px; height: 32px; }
+
+        .item-icon { 
+            width: 16px; 
+            height: 16px; 
+            position: absolute; 
+            bottom: -2px; 
+            right: -2px; 
+            background: #1e293b; 
+            border-radius: 50%; 
+            border: 1px solid var(--border); 
         }
+
+        .pdf-container { 
+            height: 90vh; 
+            border: 2px solid var(--border); 
+            border-radius: 12px; 
+            position: sticky; 
+            top: 15px; 
+            background: #1e293b;
+        }
+
+        iframe { 
+            width: 100%; 
+            height: 100%; 
+            border: none; 
+            border-radius: 10px;
+            filter: invert(90%) hue-rotate(180deg); /* Opcional: Invierte el PDF para que se vea oscuro también */
+        }
+
+        input[type="checkbox"] {
+            accent-color: var(--primary);
+            transform: scale(1.2);
+        }
+
+        /* Scrollbar Personalizada */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
     </style>
 </head>
 <body>
 
-    <h1 style="text-align:center; color: var(--secondary); margin-bottom: 20px;">PokeMMO Farm Dashboard - Ruta Completa Paxpo</h1>
-
-    <div class="main-layout">
-        
-        <div class="content">
-            <div class="card calculator">
-                <h3>Calculadora de Cooldown (+18h)</h3>
-                <p>Hora de finalización:</p>
-                <input type="time" id="inputTime" onchange="calc18h()">
-                <div id="result">Próximo: --:-- --</div>
-            </div>
-
-            <div class="card">
-                <h3>Checklist de Gimnasios (Ruta PDF)</h3>
-                <div class="table-scroll">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>✓</th>
-                                <th>Gimnasio</th>
-                                <th>Estrategia Paxpo</th>
-                            </tr>
-                        </thead>
-                        <tbody id="gym-table-body">
-                            </tbody>
-                    </table>
-                </div>
-            </div>
+<div class="main-layout">
+    <div>
+        <div class="card calculator">
+            <h3 style="margin-top: 0;">⏱️ Cooldown Gimnasios (+18h)</h3>
+            <input type="time" id="timeInput" onchange="updateTime()">
+            <div id="result">Próximo: --:--</div>
         </div>
 
-        <div class="pdf-container">
-            <iframe src="RUTA DE FARMEO_GYM_POKEMMO.pdf"></iframe>
+        <div class="card">
+            <h3 style="margin-top: 0; color: var(--primary);">⚔️ Checklist: 40 Líderes</h3>
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;">✓</th>
+                            <th style="width: 30px;">#</th>
+                            <th>Gimnasio</th>
+                            <th>Estrategia Paxpo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gym-body"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <script>
-        const POKES = {
-            tork: { name: 'Torkoal', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/324.png' },
-            blast: { name: 'Blastoise', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/9.png' },
-            arch: { name: 'Archeops', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/567.png' },
-            typh_gafas: { name: 'Typhlosion (Gafas)', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/157.png', item: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/choice-specs.png' },
-            typh_scarf: { name: 'Typhlosion (Scarf)', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/157.png', item: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/choice-scarf.png' }
-        };
+    <div class="pdf-container">
+        <iframe src="RUTA DE FARMEO_GYM_POKEMMO.pdf"></iframe>
+    </div>
+</div>
 
-        function getPokeHTML(pokeKey) {
-            const p = POKES[pokeKey];
-            if(!p) return '';
-            let itemHTML = p.item ? `<img src="${p.item}" class="item-overlay">` : '';
-            return `<div class="poke-icon-wrapper" title="${p.name}">
-                        <img src="${p.img}" class="poke-icon">
-                        ${itemHTML}
-                    </div>`;
-        }
+<script>
+    const POKES = {
+        tork: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/324.png',
+        blast: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/9.png',
+        arch: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/567.png',
+        typh: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/157.png',
+        heatran: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/485.png',
+        specs: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/choice-specs.png',
+        scarf: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/choice-scarf.png'
+    };
 
-        const gymData = [
-            { region: 'HOENN', gyms: [
-                { name: 'Arrecípolis (Plubio)', pokes: ['tork', 'typh_gafas'], note: 'Tork/Scarf a Gafas/Arch' },
-                { name: 'Lavacalda (Candela)', pokes: ['arch', 'blast'], note: 'Arch/Blast' },
-                { name: 'Arborada (Alana)', pokes: ['arch', 'typh_gafas'], note: 'Arch/Gafas - RESET PC' },
-                { name: 'Malvalona (Erico)', pokes: ['typh_scarf', 'blast'], note: 'Scarf/Blast (Si cae Scarf -> Arch + RESET)' },
-                { name: 'Azuliza (Marcial)', pokes: ['typh_scarf', 'arch'], note: 'Scarf/Arch' },
-                { name: 'Petalia (Norman)', pokes: ['tork', 'typh_gafas'], note: 'Tork/Scarf a Gafas/Arch - RESET PC' },
-                { name: 'Férrica (Petra)', pokes: ['arch', 'blast'], note: 'Estrategia mixta' },
-                { name: 'Algararia (Vito/Leti)', pokes: ['typh_gafas', 'typh_gafas'], note: '2x Typhlosion' }
-            ]},
-            { region: 'TESELIA', gyms: [
-                { name: 'Porcelana (Camus)', pokes: ['typh_scarf', 'blast'], note: 'Scarf/Blast' },
-                { name: 'Mayólica (Camila)', pokes: ['typh_scarf', 'arch'], note: 'Scarf/Arch' },
-                { name: 'Fayenza (Yakón)', pokes: ['tork', 'blast'], note: 'Tork/Scarf a Gafas/Blast - RESET PC' },
-                { name: 'Gres (Fuego)', pokes: ['typh_gafas', 'blast'], note: 'Gafas/Blast' },
-                { name: 'Gres (Planta)', pokes: ['typh_scarf', 'arch'], note: 'Scarf/Arch' },
-                { name: 'Gres (Agua)', pokes: ['tork', 'arch'], note: 'Tork/Arch -> 2x Typh - RESET PC' },
-                { name: 'Loza (Gerania)', pokes: ['typh_scarf', 'blast'], note: 'Scarf/Blast' },
-                { name: 'Teja (Junco)', pokes: ['typh_gafas', 'typh_gafas'], note: '2x Typh' },
-                { name: 'Caolín (Lirio/Iris)', pokes: ['tork', 'arch'], note: 'VIENTO AFORTUNADO -> 2x Typh - RESET PC' },
-                { name: 'Hormigón (Hiedra)', pokes: ['tork', 'typh_gafas'], note: 'Tork/Scarf a Gafas/Arch' }
-            ]},
-            { region: 'JOHTO', gyms: [
-                { name: 'Violeta (Pegaso)', pokes: ['typh_scarf', 'blast'], note: 'Scarf/Blast' },
-                { name: 'Olivo (Yasmina)', pokes: ['typh_gafas', 'arch'], note: 'Gafas/Arch' },
-                { name: 'Azalea (Antón)', pokes: ['typh_gafas', 'typh_gafas'], note: '2x Typh (Si Tyranitar -> Tork EXPLOTA) - CAMBIAR CANAL' },
-                { name: 'Iris (Morti)', pokes: ['typh_gafas', 'arch'], note: 'Gafas/Arch' },
-                { name: 'Caoba (Fredo)', pokes: ['typh_gafas', 'typh_gafas'], note: '2x Typh - RESET PC' },
-                { name: 'Trigal (Blanca)', pokes: ['typh_gafas', 'arch'], note: 'Gafas/Arch' },
-                { name: 'Endrino (Débora)', pokes: ['tork', 'typh_gafas'], note: 'Tork/Scarf a Gafas/Arch' },
-                { name: 'Orquídea (Aníbal)', pokes: ['typh_scarf', 'arch'], note: 'Scarf/Arch' }
-            ]},
-            { region: 'SINNOH', gyms: [
-                { name: 'Rocavelo (Brega)', pokes: ['typh_gafas', 'arch'], note: 'Gafas/Arch - CAMBIAR CANAL - RESET PC' },
-                { name: 'Pirita (Roco)', pokes: ['arch', 'blast'], note: 'Arch/Blast (Si Arch cae -> Gafas)' },
-                { name: 'Vetusta (Gardenia)', pokes: ['typh_scarf', 'arch'], note: 'Scarf/Arch' },
-                { name: 'Puntaneva (Inverna)', pokes: ['typh_gafas', 'typh_gafas'], note: '2x Typh (Si Heatran/Regirock -> Blast/Arch)' },
-                { name: 'Canal (Acerón)', pokes: ['tork', 'blast'], note: 'Tork/Scarf a Gafas/Blast - DESCONECTAR - RESET PC' },
-                { name: 'Marina (Lectro)', pokes: ['arch', 'blast'], note: 'Arch/Blast (Si Lanturn -> Tork a Gafas)' },
-                { name: 'Corazón (Fantina)', pokes: ['typh_gafas', 'arch'], note: 'Gafas/Arch' },
-                { name: 'Pradera (Mananti)', pokes: ['tork', 'arch'], note: 'Tork/Arch -> 2x Typh - CAMBIAR CANAL' }
-            ]},
-            { region: 'KANTO', gyms: [
-                { name: 'Azulona (Erika)', pokes: ['typh_gafas', 'typh_gafas'], note: '2x Typh (Si cae -> Arch) - RESET PC' },
-                { name: 'Carmín (Lt. Surge)', pokes: ['typh_gafas', 'typh_gafas'], note: '2x Typh (Si Lluvia -> Tork)' },
-                { name: 'Plateada (Brock)', pokes: ['arch', 'blast'], note: 'Arch/Blast (Si Toxicroak -> Scarf)' },
-                { name: 'Celeste (Misty)', pokes: ['typh_gafas', 'typh_gafas'], note: 'Estrategia mixta' },
-                { name: 'Fucsia (Koga)', pokes: ['tork', 'typh_gafas'], note: 'Tork/Scarf a Gafas/Arch' },
-                { name: 'Azafrán (Sabrina)', pokes: ['typh_gafas', 'typh_gafas'], note: '2x Typhlosion' },
-                { name: 'Canela (Blaine)', pokes: ['arch', 'blast'], note: 'Arch/Blast' },
-                { name: 'Verde (Azul)', pokes: ['tork', 'typh_gafas'], note: 'Tork/Scarf a Gafas/Arch' }
-            ]}
-        ];
+    function icon(p, item) {
+        let itemImg = item ? `<img src="${POKES[item]}" class="item-icon">` : '';
+        return `<div class="poke-icon-wrapper"><img src="${POKES[p]}" class="poke-icon">${itemImg}</div>`;
+    }
 
-        const tbody = document.getElementById('gym-table-body');
-        gymData.forEach(region => {
-            const header = document.createElement('tr');
-            header.className = 'region-header';
-            header.innerHTML = `<td colspan="3">${region.region}</td>`;
-            tbody.appendChild(header);
+    const data = [
+        { r: 'HOENN', gyms: [
+            { n: 'Arrecípolis (Plubio)', s: icon('tork')+icon('heatran','scarf'), m: '<span class="swap-alert">CAMBIO:</span> Tork/Scarf a Gafas/Arch' },
+            { n: 'Lavacalda (Candela)', s: icon('arch')+icon('blast'), m: 'Arch/Blast directo' },
+            { n: 'Arborada (Alana)', s: icon('arch')+icon('typh','specs'), m: 'Arch/Gafas - RESET PC' },
+            { n: 'Malvalona (Erico)', s: icon('heatran','scarf')+icon('blast'), m: 'Scarf/Blast. Si cae -> Archeops. RESET PC' },
+            { n: 'Azuliza (Marcial)', s: icon('tork')+icon('arch'), m: 'Scarf/Arch' },
+            { n: 'Petalia (Norman)', s: icon('tork')+icon('heatran','scarf'), m: '<span class="swap-alert">CAMBIO:</span> Tork/Scarf a Gafas/Arch. RESET PC' },
+            { n: 'Férrica (Petra)', s: icon('arch')+icon('blast'), m: 'Estrategia mixta' },
+            { n: 'Algararia (Vito/Leti)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Typh Specs + Heatran Scarf' }
+        ]},
+        { r: 'TESELIA', gyms: [
+            { n: 'Porcelana (Camus)', s: icon('heatran','scarf')+icon('blast'), m: 'Scarf/Blast' },
+            { n: 'Mayólica (Camila)', s: icon('heatran','scarf')+icon('arch'), m: 'Scarf/Arch' },
+            { n: 'Fayenza (Yakón)', s: icon('tork')+icon('heatran','scarf'), m: '<span class="swap-alert">CAMBIO:</span> Tork/Scarf a Gafas/Blast. RESET PC' },
+            { n: 'Gres (Fuego)', s: icon('typh','specs')+icon('blast'), m: 'Gafas/Blast' },
+            { n: 'Gres (Planta)', s: icon('heatran','scarf')+icon('arch'), m: 'Scarf/Arch' },
+            { n: 'Gres (Agua)', s: icon('tork')+icon('arch'), m: '<span class="swap-alert">CAMBIO:</span> Tork/Arch -> Typh/Heatran. RESET PC' },
+            { n: 'Loza (Gerania)', s: icon('heatran','scarf')+icon('blast'), m: 'Scarf/Blast' },
+            { n: 'Teja (Junco)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Uso de Typh/Heatran directo' },
+            { n: 'Caolín (Lirio/Iris)', s: icon('tork')+icon('arch'), m: '<span class="swap-alert">CAMBIO:</span> VIENTO AFORTUNADO -> Typh/Heatran. RESET PC' },
+            { n: 'Hormigón (Hiedra)', s: icon('tork')+icon('typh','specs'), m: 'Torkoal + Typhlosion (Gafas)' }
+        ]},
+        { r: 'JOHTO', gyms: [
+            { n: 'Violeta (Pegaso)', s: icon('heatran','scarf')+icon('blast'), m: 'Scarf/Blast' },
+            { n: 'Olivo (Yasmina)', s: icon('typh','specs')+icon('arch'), m: 'Gafas/Arch' },
+            { n: 'Azalea (Antón)', s: icon('typh','specs')+icon('heatran','scarf'), m: '<span class="swap-alert">CAMBIO:</span> Si Tyranitar -> Tork (Explota)' },
+            { n: 'Iris (Morti)', s: icon('typh','specs')+icon('arch'), m: 'Gafas/Arch' },
+            { n: 'Caoba (Fredo)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Typh/Heatran - RESET PC' },
+            { n: 'Trigal (Blanca)', s: icon('typh','specs')+icon('arch'), m: 'Gafas/Arch' },
+            { n: 'Endrino (Débora)', s: icon('tork')+icon('heatran','scarf'), m: '<span class="swap-alert">CAMBIO:</span> Tork/Scarf a Gafas/Arch' },
+            { n: 'Orquídea (Aníbal)', s: icon('heatran','scarf')+icon('arch'), m: 'Scarf/Arch' }
+        ]},
+        { r: 'SINNOH', gyms: [
+            { n: 'Rocavelo (Brega)', s: icon('typh','specs')+icon('arch'), m: 'Gafas/Arch - CAMBIAR CANAL' },
+            { n: 'Pirita (Roco)', s: icon('arch')+icon('blast'), m: '<span class="swap-alert">CAMBIO:</span> Si cae -> Typhlosion (Gafas)' },
+            { n: 'Vetusta (Gardenia)', s: icon('heatran','scarf')+icon('arch'), m: 'Scarf/Arch' },
+            { n: 'Puntaneva (Inverna)', s: icon('typh','specs')+icon('heatran','scarf'), m: '<span class="swap-alert">CAMBIO:</span> Si Heatran/Regirock -> Blast/Arch' },
+            { n: 'Canal (Acerón)', s: icon('tork')+icon('heatran','scarf'), m: '<span class="swap-alert">CAMBIO:</span> Tork/Scarf a Gafas/Blast. RESET PC' },
+            { n: 'Marina (Lectro)', s: icon('arch')+icon('blast'), m: '<span class="swap-alert">CAMBIO:</span> Si Lanturn 1ro -> Blast a Tork' },
+            { n: 'Corazón (Fantina)', s: icon('typh','specs')+icon('arch'), m: 'Gafas/Arch' },
+            { n: 'Pradera (Mananti)', s: icon('tork')+icon('arch'), m: '<span class="swap-alert">CAMBIO:</span> Arch cae -> Blast -> Typh/Heatran' }
+        ]},
+        { r: 'KANTO', gyms: [
+            { n: 'Azulona (Erika)', s: icon('typh','specs')+icon('heatran','scarf'), m: '<span class="swap-alert">CAMBIO:</span> Si cae -> Archeops. RESET PC' },
+            { n: 'Carmín (Lt. Surge)', s: icon('typh','specs')+icon('heatran','scarf'), m: '<span class="swap-alert">CAMBIO:</span> Si Lluvia -> Scarf a Tork' },
+            { n: 'Plateada (Brock)', s: icon('arch')+icon('blast'), m: '<span class="swap-alert">CAMBIO:</span> Si Toxicroak -> Blast a Scarf' },
+            { n: 'Celeste (Misty)', s: icon('arch')+icon('blast'), m: 'Arch/Blast' },
+            { n: 'Fucsia (Koga)', s: icon('tork')+icon('heatran','scarf'), m: '<span class="swap-alert">CAMBIO:</span> Tork/Scarf a Gafas/Arch' },
+            { n: 'Azafrán (Sabrina)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Typh Specs + Heatran Scarf' },
+            { n: 'Canela (Blaine)', s: icon('arch')+icon('blast'), m: 'Arch/Blast' },
+            { n: 'Verde (Azul)', s: icon('tork')+icon('heatran','scarf'), m: '<span class="swap-alert">CAMBIO:</span> Tork/Scarf a Gafas/Arch' }
+        ]}
+    ];
 
-            region.gyms.forEach(gym => {
-                const tr = document.createElement('tr');
-                const pokesHTML = gym.pokes.map(p => getPokeHTML(p)).join('');
-                tr.innerHTML = `
-                    <td><input type="checkbox"></td>
-                    <td>${gym.name}</td>
-                    <td>
-                        <div class="strat-cell">
-                            ${pokesHTML}
-                            <span class="reset-note">${gym.note}</span>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
+    const container = document.getElementById('gym-body');
+    let gymCounter = 1;
+    data.forEach(reg => {
+        let h = document.createElement('tr');
+        h.className = 'region-header';
+        h.innerHTML = `<td colspan="4">📍 ${reg.r}</td>`;
+        container.appendChild(h);
+        reg.gyms.forEach(g => {
+            let row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="checkbox"></td>
+                <td style="color:var(--text-muted)">${gymCounter}</td>
+                <td style="font-weight:600">${g.n}</td>
+                <td>${g.s}<span class="note">${g.m}</span></td>
+            `;
+            container.appendChild(row);
+            gymCounter++;
         });
+    });
 
-        function calc18h() {
-            const timeVal = document.getElementById('inputTime').value;
-            if (!timeVal) return;
-            let [hours, minutes] = timeVal.split(':').map(Number);
-            let newHours = (hours + 18) % 24;
-            let period = newHours >= 12 ? 'PM' : 'AM';
-            let hours12 = newHours % 12 || 12; 
-            let minStr = minutes < 10 ? '0' + minutes : minutes;
-            document.getElementById('result').innerText = `Próximo: ${hours12}:${minStr} ${period}`;
-        }
-    </script>
+    function updateTime() {
+        const val = document.getElementById('timeInput').value;
+        if (!val) return;
+        let [h, m] = val.split(':').map(Number);
+        let nh = (h + 18) % 24;
+        let ampm = nh >= 12 ? 'PM' : 'AM';
+        nh = nh % 12 || 12;
+        document.getElementById('result').innerText = `Próximo: ${nh}:${m < 10 ? '0'+m : m} ${ampm}`;
+    }
+</script>
 </body>
 </html>
