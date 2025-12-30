@@ -1,1 +1,352 @@
-xd
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estra Miyu - PokeMMO Tracker</title>
+    <style>
+        :root { 
+            --primary: #ff4d4d; 
+            --secondary: #0f172a; 
+            --bg: #020617; 
+            --card-bg: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --accent: #fbbf24;
+            --berry-color: #f87171;
+            --success: #22c55e;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text-main);
+            padding: 15px; 
+            margin: 0; 
+        }
+
+        .header-title {
+            text-align: center;
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 0px #000;
+        }
+
+        .main-layout { 
+            display: grid; 
+            grid-template-columns: 1.2fr 1fr; 
+            gap: 20px; 
+            max-width: 1600px; 
+            margin: auto; 
+        }
+
+        @media (max-width: 1100px) { 
+            .main-layout { grid-template-columns: 1fr; } 
+        }
+
+        /* Tabs System */
+        .tabs-container {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: var(--secondary);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 10px 15px;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card { 
+            background: var(--card-bg); 
+            padding: 20px; 
+            border-radius: 0 12px 12px 12px; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); 
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .top-calculators {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) { .top-calculators { grid-template-columns: 1fr; } }
+
+        .calculator { text-align: center; border: 1px solid var(--primary); border-radius: 12px; }
+        .berry-card { border: 1px solid var(--berry-color); border-radius: 12px; }
+
+        .time-display { 
+            font-size: 1.4rem; 
+            font-weight: bold; 
+            color: var(--accent); 
+            margin-top: 10px;
+        }
+
+        .berry-steps {
+            text-align: left;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+        }
+
+        input[type="time"] {
+            background: #0f172a;
+            color: white;
+            border: 1px solid var(--border);
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .table-scroll { 
+            max-height: 60vh; 
+            overflow-y: auto; 
+            border-radius: 8px; 
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; border-bottom: 1px solid var(--border); text-align: left; font-size: 0.85rem; }
+        th { background: #0f172a; color: var(--primary); position: sticky; top: 0; z-index: 10; }
+
+        .swap-alert { color: #ff4d4d; font-weight: 800; background: rgba(255, 77, 77, 0.1); padding: 2px 5px; border-radius: 4px; }
+        .note { color: var(--text-muted); font-size: 0.75rem; display: block; margin-top: 5px; }
+
+        .pdf-container { height: 90vh; border: 2px solid var(--border); border-radius: 12px; position: sticky; top: 15px; background: white; overflow: hidden; }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        .poke-icon-wrapper { display: inline-flex; position: relative; margin-right: 8px; background: rgba(255,255,255,0.05); border-radius: 50%; padding: 2px; }
+        .poke-icon { width: 32px; height: 32px; }
+        .item-icon { width: 16px; height: 16px; position: absolute; bottom: -2px; right: -2px; background: #1e293b; border-radius: 50%; border: 1px solid var(--border); }
+    </style>
+</head>
+<body>
+
+<h1 class="header-title">Estra Miyu</h1>
+
+<div class="main-layout">
+    <div>
+        <div class="top-calculators">
+            <div class="card calculator" style="border-radius: 12px;">
+                <h3 style="margin: 0 0 10px 0;">⏱️ Gym Cooldown</h3>
+                <input type="time" id="gymTime" onchange="updateGymTime()">
+                <div id="gymResult" class="time-display">Próximo: --:--</div>
+            </div>
+
+            <div class="card berry-card" style="border-radius: 12px;">
+                <h3 style="margin: 0 0 10px 0; color: var(--berry-color);">🍒 Bayas Zanama</h3>
+                <input type="time" id="berryTime" onchange="calculateBerries()">
+                <div id="berrySteps" class="berry-steps">Ingresa hora...</div>
+            </div>
+        </div>
+
+        <div class="tabs-container" id="tabs-menu">
+            </div>
+
+        <div id="tabs-content-container">
+            </div>
+    </div>
+
+    <div class="pdf-container">
+        <iframe src="RUTA DE FARMEO_GYM_POKEMMO.pdf"></iframe>
+    </div>
+</div>
+
+<script>
+    const POKES = {
+        tork: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/324.png',
+        blast: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/9.png',
+        arch: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/567.png',
+        typh: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/157.png',
+        heatran: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/485.png',
+        specs: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/choice-specs.png',
+        scarf: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/choice-scarf.png'
+    };
+
+    function icon(p, item) {
+        let itemImg = item ? `<img src="${POKES[item]}" class="item-icon">` : '';
+        return `<div class="poke-icon-wrapper"><img src="${POKES[p]}" class="poke-icon">${itemImg}</div>`;
+    }
+
+    const data = [
+        { r: 'HOENN', gyms: [
+            { n: 'Arrecípolis (Plubio)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork/Scarf a Gafas/Arch' },
+            { n: 'Lavacalda (Candela)', s: icon('arch')+icon('blast'), m: 'Arch/Blast directo' },
+            { n: 'Arborada (Alana)', s: icon('arch')+icon('typh','specs'), m: 'Arch/Gafas - RESET PC' },
+            { n: 'Malvalona (Erico)', s: icon('heatran','scarf')+icon('blast'), m: 'Scarf/Blast. Reset PC' },
+            { n: 'Azuliza (Marcial)', s: icon('tork')+icon('arch'), m: 'Scarf/Arch' },
+            { n: 'Petalia (Norman)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork/Scarf a Gafas/Arch' },
+            { n: 'Férrica (Petra)', s: icon('arch')+icon('blast'), m: 'Estrategia mixta' },
+            { n: 'Algararia (Vito/Leti)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Typh Specs + Heatran Scarf' }
+        ]},
+        { r: 'TESELIA', gyms: [
+            { n: 'Porcelana (Camus)', s: icon('heatran','scarf')+icon('blast'), m: 'Scarf/Blast' },
+            { n: 'Mayólica (Camila)', s: icon('heatran','scarf')+icon('arch'), m: 'Scarf/Arch' },
+            { n: 'Fayenza (Yakón)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork/Scarf a Gafas/Blast' },
+            { n: 'Gres (Fuego)', s: icon('typh','specs')+icon('blast'), m: 'Gafas/Blast' },
+            { n: 'Gres (Planta)', s: icon('heatran','scarf')+icon('arch'), m: 'Scarf/Arch' },
+            { n: 'Gres (Agua)', s: icon('tork')+icon('arch'), m: 'Tork/Arch -> Typh/Heatran' },
+            { n: 'Loza (Gerania)', s: icon('heatran','scarf')+icon('blast'), m: 'Scarf/Blast' },
+            { n: 'Teja (Junco)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Uso de Typh/Heatran directo' },
+            { n: 'Caolín (Lirio/Iris)', s: icon('tork')+icon('arch'), m: 'VIENTO AFORTUNADO -> Typh/Heatran' },
+            { n: 'Hormigón (Hiedra)', s: icon('tork')+icon('typh','specs'), m: 'Torkoal + Typhlosion (Gafas)' }
+        ]},
+        { r: 'JOHTO', gyms: [
+            { n: 'Violeta (Pegaso)', s: icon('heatran','scarf')+icon('blast'), m: 'Scarf/Blast' },
+            { n: 'Olivo (Yasmina)', s: icon('typh','specs')+icon('arch'), m: 'Gafas/Arch' },
+            { n: 'Azalea (Antón)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Si Tyranitar -> Tork (Explota)' },
+            { n: 'Iris (Morti)', s: icon('typh','specs')+icon('arch'), m: 'Gafas/Arch' },
+            { n: 'Caoba (Fredo)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Typh/Heatran - RESET PC' },
+            { n: 'Trigal (Blanca)', s: icon('typh','specs')+icon('arch'), m: 'Gafas/Arch' },
+            { n: 'Endrino (Débora)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork/Scarf a Gafas/Arch' },
+            { n: 'Orquídea (Aníbal)', s: icon('heatran','scarf')+icon('arch'), m: 'Scarf/Arch' }
+        ]},
+        { r: 'SINNOH', gyms: [
+            { n: 'Rocavelo (Brega)', s: icon('typh','specs')+icon('arch'), m: 'Gafas/Arch - CAMBIAR CANAL' },
+            { n: 'Pirita (Roco)', s: icon('arch')+icon('blast'), m: 'Si cae -> Typhlosion (Gafas)' },
+            { n: 'Vetusta (Gardenia)', s: icon('heatran','scarf')+icon('arch'), m: 'Scarf/Arch' },
+            { n: 'Puntaneva (Inverna)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Si Heatran/Regirock -> Blast/Arch' },
+            { n: 'Canal (Acerón)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork/Scarf a Gafas/Blast' },
+            { n: 'Marina (Lectro)', s: icon('arch')+icon('blast'), m: 'Si Lanturn 1ro -> Blast a Tork' },
+            { n: 'Corazón (Fantina)', s: icon('typh','specs')+icon('arch'), m: 'Gafas/Arch' },
+            { n: 'Pradera (Mananti)', s: icon('tork')+icon('arch'), m: 'Arch cae -> Blast -> Typh/Heatran' }
+        ]},
+        { r: 'KANTO', gyms: [
+            { n: 'Azulona (Erika)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Si cae -> Archeops. RESET PC' },
+            { n: 'Carmín (Lt. Surge)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Si Lluvia -> Scarf a Tork' },
+            { n: 'Plateada (Brock)', s: icon('arch')+icon('blast'), m: 'Si Toxicroak -> Blast a Scarf' },
+            { n: 'Celeste (Misty)', s: icon('arch')+icon('blast'), m: 'Arch/Blast' },
+            { n: 'Fucsia (Koga)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork/Scarf a Gafas/Arch' },
+            { n: 'Azafrán (Sabrina)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Typh Specs + Heatran Scarf' },
+            { n: 'Canela (Blaine)', s: icon('arch')+icon('blast'), m: 'Arch/Blast' },
+            { n: 'Verde (Azul)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork/Scarf a Gafas/Arch' }
+        ]}
+    ];
+
+    // Inicializar Pestañas
+    const tabsMenu = document.getElementById('tabs-menu');
+    const tabsContent = document.getElementById('tabs-content-container');
+
+    data.forEach((region, index) => {
+        // Botón de pestaña
+        const btn = document.createElement('button');
+        btn.className = `tab-btn ${index === 0 ? 'active' : ''}`;
+        btn.innerText = region.r;
+        btn.onclick = () => openTab(index);
+        btn.id = `btn-${index}`;
+        tabsMenu.appendChild(btn);
+
+        // Contenido de pestaña
+        const div = document.createElement('div');
+        div.className = `tab-content ${index === 0 ? 'active' : ''}`;
+        div.id = `tab-${index}`;
+        
+        let tableHtml = `
+            <div class="card">
+                <h3 style="margin-top:0; color:var(--primary)">⚔️ Líderes de ${region.r}</h3>
+                <div class="table-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;">✓</th>
+                                <th>Gimnasio</th>
+                                <th>Estrategia</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+        
+        region.gyms.forEach(g => {
+            const gymId = g.n.replace(/\s/g, '');
+            const checked = localStorage.getItem(gymId) === 'true' ? 'checked' : '';
+            tableHtml += `
+                <tr>
+                    <td><input type="checkbox" id="${gymId}" ${checked} onchange="saveCheck('${gymId}')"></td>
+                    <td style="font-weight:600">${g.n}</td>
+                    <td>${g.s}<span class="note">${g.m}</span></td>
+                </tr>`;
+        });
+
+        tableHtml += `</tbody></table></div></div>`;
+        div.innerHTML = tableHtml;
+        tabsContent.appendChild(div);
+    });
+
+    function openTab(index) {
+        document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
+        document.getElementById(`tab-${index}`).classList.add('active');
+        document.getElementById(`btn-${index}`).classList.add('active');
+    }
+
+    function saveCheck(id) { localStorage.setItem(id, document.getElementById(id).checked); }
+
+    function updateGymTime() {
+        const val = document.getElementById('gymTime').value;
+        if (!val) return;
+        let [h, m] = val.split(':').map(Number);
+        let nh = (h + 18) % 24;
+        let ampm = nh >= 12 ? 'PM' : 'AM';
+        nh = nh % 12 || 12;
+        document.getElementById('gymResult').innerText = `Próximo: ${nh}:${m < 10 ? '0'+m : m} ${ampm}`;
+    }
+
+    function calculateBerries() {
+        const val = document.getElementById('berryTime').value;
+        if (!val) return;
+        let [h, m] = val.split(':').map(Number);
+        const stepsContainer = document.getElementById('berrySteps');
+        
+        function formatTime(hoursToAdd) {
+            let totalMins = (h * 60) + m + (hoursToAdd * 60);
+            let nh = Math.floor(totalMins / 60) % 24;
+            let nm = totalMins % 60;
+            let ampm = nh >= 12 ? 'PM' : 'AM';
+            let h12 = nh % 12 || 12;
+            return `${h12}:${nm < 10 ? '0'+nm : nm} ${ampm}`;
+        }
+
+        stepsContainer.innerHTML = `
+            <div>💧 <b>Riego 1:</b> ${formatTime(7.5)}</div>
+            <div>💧 <b>Riego 2:</b> ${formatTime(15)}</div>
+            <div style="color:var(--accent); margin-top:5px; border-top:1px solid #444; padding-top:5px">
+                ✨ <b>COSECHA:</b> ${formatTime(20)}
+            </div>
+        `;
+    }
+</script>
+</body>
+</html>
+
