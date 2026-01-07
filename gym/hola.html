@@ -14,63 +14,126 @@
             --text-muted: #94a3b8;
             --border: #334155;
             --accent: #fbbf24;
-            --berry-color: #f87171;
-            --success: #22c55e;
+            --nav-bg: #020617; /* Fondo oscuro como el de la imagen */
         }
 
         body { 
             font-family: 'Segoe UI', Roboto, sans-serif; 
             background-color: var(--bg); 
             color: var(--text-main);
-            padding: 15px; 
             margin: 0; 
+            padding: 0;
         }
 
-        .header-title {
-            text-align: center;
-            color: var(--primary);
-            font-size: 2.5rem;
-            margin-bottom: 20px;
+        /* --- NAVBAR ESTILO AGENCIA DIGITAL --- */
+        .navbar {
+            background-color: var(--nav-bg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 50px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-text {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            text-shadow: 2px 2px 0px #000;
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-item {
+            color: white;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.3s;
+            background: none;
+            border: none;
+            padding: 5px 0;
+            text-transform: capitalize;
+        }
+
+        .nav-item:hover {
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        /* --- LAYOUT PRINCIPAL --- */
+        .container {
+            padding: 20px;
+            max-width: 1600px;
+            margin: auto;
         }
 
         .main-layout { 
             display: grid; 
             grid-template-columns: 1.2fr 1fr; 
             gap: 20px; 
-            max-width: 1600px; 
-            margin: auto; 
         }
 
         @media (max-width: 1100px) { 
             .main-layout { grid-template-columns: 1fr; } 
+            .navbar { padding: 10px 20px; flex-direction: column; gap: 15px; }
         }
 
-        /* Tabs System */
-        .tabs-container {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-        }
-
-        .tab-btn {
-            background: var(--secondary);
-            color: var(--text-muted);
+        .card { 
+            background: var(--card-bg); 
+            padding: 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); 
+            margin-bottom: 20px;
             border: 1px solid var(--border);
-            padding: 10px 15px;
-            border-radius: 8px 8px 0 0;
-            cursor: pointer;
-            transition: 0.3s;
-            font-weight: bold;
         }
 
-        .tab-btn.active {
-            background: var(--primary);
+        .calculator { 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            border: 1px solid var(--primary); 
+            border-radius: 12px;
+            padding: 15px;
+            background: var(--card-bg);
+            margin-bottom: 20px;
+        }
+
+        .time-display { 
+            font-size: 1.2rem; 
+            font-weight: bold; 
+            color: var(--accent); 
+        }
+
+        input[type="time"] {
+            background: #0f172a;
             color: white;
-            border-color: var(--primary);
+            border: 1px solid var(--border);
+            padding: 8px;
+            border-radius: 8px;
         }
 
         .tab-content {
@@ -87,101 +150,58 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .card { 
-            background: var(--card-bg); 
-            padding: 20px; 
-            border-radius: 0 12px 12px 12px; 
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); 
-            margin-bottom: 20px;
-            border: 1px solid var(--border);
-        }
-
-        .top-calculators {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        @media (max-width: 600px) { .top-calculators { grid-template-columns: 1fr; } }
-
-        .calculator { text-align: center; border: 1px solid var(--primary); border-radius: 12px; }
-        .berry-card { border: 1px solid var(--berry-color); border-radius: 12px; }
-
-        .time-display { 
-            font-size: 1.4rem; 
-            font-weight: bold; 
-            color: var(--accent); 
-            margin-top: 10px;
-        }
-
-        .berry-steps {
-            text-align: left;
-            font-size: 0.85rem;
-            margin-top: 10px;
-            padding: 10px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 8px;
-        }
-
-        input[type="time"] {
-            background: #0f172a;
-            color: white;
-            border: 1px solid var(--border);
-            padding: 8px;
-            border-radius: 8px;
-        }
-
+        /* --- TABLAS --- */
         .table-scroll { 
-            max-height: 60vh; 
+            max-height: 65vh; 
             overflow-y: auto; 
             border-radius: 8px; 
         }
 
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px; border-bottom: 1px solid var(--border); text-align: left; font-size: 0.85rem; }
+        th, td { padding: 12px; border-bottom: 1px solid var(--border); text-align: left; }
         th { background: #0f172a; color: var(--primary); position: sticky; top: 0; z-index: 10; }
 
-        .swap-alert { color: #ff4d4d; font-weight: 800; background: rgba(255, 77, 77, 0.1); padding: 2px 5px; border-radius: 4px; }
-        .note { color: var(--text-muted); font-size: 0.75rem; display: block; margin-top: 5px; }
+        .gym-number { color: var(--accent); font-weight: bold; font-family: monospace; }
 
-        .pdf-container { height: 90vh; border: 2px solid var(--border); border-radius: 12px; position: sticky; top: 15px; background: white; overflow: hidden; }
+        /* ICONOS */
+        .strategy-container { display: flex; align-items: center; gap: 12px; }
+        .poke-icon-wrapper { 
+            display: inline-flex; position: relative; background: rgba(255,255,255,0.1); 
+            border-radius: 50%; padding: 4px; width: 44px; height: 44px; justify-content: center; align-items: center;
+        }
+        .poke-icon { width: 38px; height: 38px; object-fit: contain; }
+        .item-icon { width: 18px; height: 18px; position: absolute; bottom: -2px; right: -2px; background: #1e293b; border-radius: 50%; border: 1px solid var(--border); }
+        .note { color: var(--text-muted); font-size: 0.8rem; display: block; margin-top: 2px; }
+
+        .pdf-container { height: 85vh; border: 2px solid var(--border); border-radius: 12px; position: sticky; top: 80px; background: white; overflow: hidden; }
         iframe { width: 100%; height: 100%; border: none; }
-
-        .poke-icon-wrapper { display: inline-flex; position: relative; margin-right: 8px; background: rgba(255,255,255,0.05); border-radius: 50%; padding: 2px; }
-        .poke-icon { width: 32px; height: 32px; }
-        .item-icon { width: 16px; height: 16px; position: absolute; bottom: -2px; right: -2px; background: #1e293b; border-radius: 50%; border: 1px solid var(--border); }
     </style>
 </head>
 <body>
 
-<h1 class="header-title">Estra Miyu</h1>
+<nav class="navbar">
+    <div class="nav-logo">
+        <div class="logo-text">ESTRA<span>MIYU</span></div>
+    </div>
+    <div class="nav-links" id="tabs-menu">
+        </div>
+</nav>
 
-<div class="main-layout">
-    <div>
-        <div class="top-calculators">
-            <div class="card calculator" style="border-radius: 12px;">
-                <h3 style="margin: 0 0 10px 0;">⏱️ Gym Cooldown</h3>
+<div class="container">
+    <div class="main-layout">
+        <div>
+            <div class="calculator">
+                <span style="font-weight: bold; color: var(--text-muted);">⏱️ COOLDOWN:</span>
                 <input type="time" id="gymTime" onchange="updateGymTime()">
                 <div id="gymResult" class="time-display">Próximo: --:--</div>
             </div>
 
-            <div class="card berry-card" style="border-radius: 12px;">
-                <h3 style="margin: 0 0 10px 0; color: var(--berry-color);">🍒 Bayas Zanama</h3>
-                <input type="time" id="berryTime" onchange="calculateBerries()">
-                <div id="berrySteps" class="berry-steps">Ingresa hora...</div>
-            </div>
+            <div id="tabs-content-container"></div>
         </div>
 
-        <div class="tabs-container" id="tabs-menu">
-            </div>
-
-        <div id="tabs-content-container">
-            </div>
-    </div>
-
-    <div class="pdf-container">
-        <iframe src="RUTA DE FARMEO_GYM_POKEMMO.pdf"></iframe>
+        <div class="pdf-container">
+            <iframe src="RUTA DE FARMEO_GYM_POKEMMO.pdf"></iframe>
+        </div>
     </div>
 </div>
 
@@ -202,17 +222,17 @@
     }
 
     const data = [
-        { r: 'HOENN', gyms: [
-            { n: 'Arrecípolis (Plubio)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork/Scarf a Gafas/Arch' },
+        { r: 'Hoenn', gyms: [
+            { n: 'Algararia (Vito/Leti)', s: icon('tork','typh')+icon('heatran','arch'), m: 'Typhosion + archops' },
             { n: 'Lavacalda (Candela)', s: icon('arch')+icon('blast'), m: 'Arch/Blast directo' },
             { n: 'Arborada (Alana)', s: icon('arch')+icon('typh','specs'), m: 'Arch/Gafas - RESET PC' },
             { n: 'Malvalona (Erico)', s: icon('heatran','scarf')+icon('blast'), m: 'Scarf/Blast. Reset PC' },
             { n: 'Azuliza (Marcial)', s: icon('tork')+icon('arch'), m: 'Scarf/Arch' },
             { n: 'Petalia (Norman)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork/Scarf a Gafas/Arch' },
             { n: 'Férrica (Petra)', s: icon('arch')+icon('blast'), m: 'Estrategia mixta' },
-            { n: 'Algararia (Vito/Leti)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Typh Specs + Heatran Scarf' }
+            { n: 'Arrecípolis (Plubio)', s: icon('tork')+icon('arch'), m: 'Tork/Scarf a Gafas/Arch' }
         ]},
-        { r: 'TESELIA', gyms: [
+        { r: 'Teselia', gyms: [
             { n: 'Porcelana (Camus)', s: icon('heatran','scarf')+icon('blast'), m: 'Scarf/Blast' },
             { n: 'Mayólica (Camila)', s: icon('heatran','scarf')+icon('arch'), m: 'Scarf/Arch' },
             { n: 'Fayenza (Yakón)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork/Scarf a Gafas/Blast' },
@@ -224,7 +244,7 @@
             { n: 'Caolín (Lirio/Iris)', s: icon('tork')+icon('arch'), m: 'VIENTO AFORTUNADO -> Typh/Heatran' },
             { n: 'Hormigón (Hiedra)', s: icon('tork')+icon('typh','specs'), m: 'Torkoal + Typhlosion (Gafas)' }
         ]},
-        { r: 'JOHTO', gyms: [
+        { r: 'Johto', gyms: [
             { n: 'Violeta (Pegaso)', s: icon('heatran','scarf')+icon('blast'), m: 'Scarf/Blast' },
             { n: 'Olivo (Yasmina)', s: icon('typh','specs')+icon('arch'), m: 'Gafas/Arch' },
             { n: 'Azalea (Antón)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Si Tyranitar -> Tork (Explota)' },
@@ -234,7 +254,7 @@
             { n: 'Endrino (Débora)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork/Scarf a Gafas/Arch' },
             { n: 'Orquídea (Aníbal)', s: icon('heatran','scarf')+icon('arch'), m: 'Scarf/Arch' }
         ]},
-        { r: 'SINNOH', gyms: [
+        { r: 'Sinnoh', gyms: [
             { n: 'Rocavelo (Brega)', s: icon('typh','specs')+icon('arch'), m: 'Gafas/Arch - CAMBIAR CANAL' },
             { n: 'Pirita (Roco)', s: icon('arch')+icon('blast'), m: 'Si cae -> Typhlosion (Gafas)' },
             { n: 'Vetusta (Gardenia)', s: icon('heatran','scarf')+icon('arch'), m: 'Scarf/Arch' },
@@ -244,7 +264,7 @@
             { n: 'Corazón (Fantina)', s: icon('typh','specs')+icon('arch'), m: 'Gafas/Arch' },
             { n: 'Pradera (Mananti)', s: icon('tork')+icon('arch'), m: 'Arch cae -> Blast -> Typh/Heatran' }
         ]},
-        { r: 'KANTO', gyms: [
+        { r: 'Kanto', gyms: [
             { n: 'Azulona (Erika)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Si cae -> Archeops. RESET PC' },
             { n: 'Carmín (Lt. Surge)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Si Lluvia -> Scarf a Tork' },
             { n: 'Plateada (Brock)', s: icon('arch')+icon('blast'), m: 'Si Toxicroak -> Blast a Scarf' },
@@ -256,20 +276,19 @@
         ]}
     ];
 
-    // Inicializar Pestañas
     const tabsMenu = document.getElementById('tabs-menu');
     const tabsContent = document.getElementById('tabs-content-container');
 
     data.forEach((region, index) => {
-        // Botón de pestaña
+        // Crear botones de la Navbar
         const btn = document.createElement('button');
-        btn.className = `tab-btn ${index === 0 ? 'active' : ''}`;
+        btn.className = `nav-item ${index === 0 ? 'active' : ''}`;
         btn.innerText = region.r;
         btn.onclick = () => openTab(index);
         btn.id = `btn-${index}`;
         tabsMenu.appendChild(btn);
 
-        // Contenido de pestaña
+        // Crear contenido de tablas
         const div = document.createElement('div');
         div.className = `tab-content ${index === 0 ? 'active' : ''}`;
         div.id = `tab-${index}`;
@@ -281,6 +300,7 @@
                     <table>
                         <thead>
                             <tr>
+                                <th style="width: 30px;">#</th>
                                 <th style="width: 40px;">✓</th>
                                 <th>Gimnasio</th>
                                 <th>Estrategia</th>
@@ -288,14 +308,20 @@
                         </thead>
                         <tbody>`;
         
-        region.gyms.forEach(g => {
+        region.gyms.forEach((g, i) => {
             const gymId = g.n.replace(/\s/g, '');
             const checked = localStorage.getItem(gymId) === 'true' ? 'checked' : '';
             tableHtml += `
                 <tr>
+                    <td class="gym-number">${i + 1}</td>
                     <td><input type="checkbox" id="${gymId}" ${checked} onchange="saveCheck('${gymId}')"></td>
                     <td style="font-weight:600">${g.n}</td>
-                    <td>${g.s}<span class="note">${g.m}</span></td>
+                    <td>
+                        <div class="strategy-container">
+                            ${g.s}
+                            <div><span class="note">${g.m}</span></div>
+                        </div>
+                    </td>
                 </tr>`;
         });
 
@@ -306,7 +332,7 @@
 
     function openTab(index) {
         document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(tb => tb.classList.remove('active'));
         document.getElementById(`tab-${index}`).classList.add('active');
         document.getElementById(`btn-${index}`).classList.add('active');
     }
@@ -322,31 +348,6 @@
         nh = nh % 12 || 12;
         document.getElementById('gymResult').innerText = `Próximo: ${nh}:${m < 10 ? '0'+m : m} ${ampm}`;
     }
-
-    function calculateBerries() {
-        const val = document.getElementById('berryTime').value;
-        if (!val) return;
-        let [h, m] = val.split(':').map(Number);
-        const stepsContainer = document.getElementById('berrySteps');
-        
-        function formatTime(hoursToAdd) {
-            let totalMins = (h * 60) + m + (hoursToAdd * 60);
-            let nh = Math.floor(totalMins / 60) % 24;
-            let nm = totalMins % 60;
-            let ampm = nh >= 12 ? 'PM' : 'AM';
-            let h12 = nh % 12 || 12;
-            return `${h12}:${nm < 10 ? '0'+nm : nm} ${ampm}`;
-        }
-
-        stepsContainer.innerHTML = `
-            <div>💧 <b>Riego 1:</b> ${formatTime(7.5)}</div>
-            <div>💧 <b>Riego 2:</b> ${formatTime(15)}</div>
-            <div style="color:var(--accent); margin-top:5px; border-top:1px solid #444; padding-top:5px">
-                ✨ <b>COSECHA:</b> ${formatTime(20)}
-            </div>
-        `;
-    }
 </script>
 </body>
 </html>
-
