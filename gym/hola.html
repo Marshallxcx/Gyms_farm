@@ -1,211 +1,508 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estra Miyu - PokeMMO Tracker</title>
+    <title>Estra GAtO - PokeMMO Gym Tracker & Strategy Hub</title>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#ff3b3b',
+                            crimson: '#dc2626',
+                            gold: '#fbbf24',
+                            amber: '#f59e0b',
+                            dark: '#030712',
+                            card: '#0b1329',
+                            cardHover: '#111c38',
+                            glow: '#ff5252'
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root { 
-            --primary: #ff4d4d; 
-            --secondary: #0f172a; 
-            --bg: #020617; 
-            --card-bg: #1e293b;
-            --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
-            --border: #334155;
-            --accent: #fbbf24;
-            --nav-bg: #020617; /* Fondo oscuro como el de la imagen */
+        /* Custom Gaming Scrollbar */
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030712;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 59, 59, 0.2);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff3b3b;
+            box-shadow: 0 0 10px #ff3b3b;
         }
 
-        body { 
-            font-family: 'Segoe UI', Roboto, sans-serif; 
-            background-color: var(--bg); 
-            color: var(--text-main);
-            margin: 0; 
-            padding: 0;
-        }
-
-        /* --- NAVBAR ESTILO AGENCIA DIGITAL --- */
-        .navbar {
-            background-color: var(--nav-bg);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 50px;
-            border-bottom: 1px solid var(--border);
-            position: sticky;
+        /* Ambient Canvas Background */
+        #ambientCanvas {
+            position: fixed;
             top: 0;
-            z-index: 1000;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.45;
         }
 
-        .nav-logo {
-            display: flex;
+        /* Glassmorphism Panels */
+        .glass-panel {
+            background: rgba(11, 19, 41, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(255, 59, 59, 0.5);
+            box-shadow: 0 10px 30px -5px rgba(255, 59, 59, 0.25), 0 0 15px rgba(251, 191, 36, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .glass-card.completed {
+            border-color: rgba(16, 185, 129, 0.3);
+            background: rgba(6, 78, 59, 0.15);
+        }
+
+        .text-glow-red {
+            text-shadow: 0 0 14px rgba(255, 59, 59, 0.75), 0 0 25px rgba(255, 59, 59, 0.3);
+        }
+
+        .text-glow-gold {
+            text-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
+        }
+
+        /* Sprite Icon Styling */
+        .poke-icon-wrapper {
+            display: inline-flex;
+            position: relative;
+            background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(15, 23, 42, 0.8) 80%);
+            border-radius: 12px;
+            padding: 3px;
+            width: 46px;
+            height: 46px;
+            justify-content: center;
             align-items: center;
-            gap: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.6);
+            transition: all 0.25s ease;
         }
 
-        .logo-text {
-            color: white;
-            font-size: 1.8rem;
-            font-weight: bold;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+        .poke-icon-wrapper:hover {
+            transform: scale(1.12) rotate(3deg);
+            border-color: rgba(251, 191, 36, 0.7);
+            box-shadow: 0 0 12px rgba(251, 191, 36, 0.3);
         }
 
-        .logo-text span {
-            color: var(--primary);
+        .poke-icon {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.7));
         }
 
-        .nav-links {
-            display: flex;
-            gap: 25px;
+        .item-icon {
+            width: 20px;
+            height: 20px;
+            position: absolute;
+            bottom: -3px;
+            right: -3px;
+            background: #030712;
+            border-radius: 50%;
+            border: 1.5px solid #fbbf24;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.9);
+            padding: 1px;
         }
 
-        .nav-item {
-            color: white;
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
+        /* Custom Animated Pokéball Checkbox */
+        .pokeball-checkbox-label {
+            position: relative;
             cursor: pointer;
-            transition: 0.3s;
-            background: none;
-            border: none;
-            padding: 5px 0;
-            text-transform: capitalize;
-        }
-
-        .nav-item:hover {
-            color: var(--primary);
-        }
-
-        .nav-item.active {
-            color: var(--primary);
-            border-bottom: 2px solid var(--primary);
-        }
-
-        /* --- LAYOUT PRINCIPAL --- */
-        .container {
-            padding: 20px;
-            max-width: 1600px;
-            margin: auto;
-        }
-
-        .main-layout { 
-            display: grid; 
-            grid-template-columns: 1.2fr 1fr; 
-            gap: 20px; 
-        }
-
-        @media (max-width: 1100px) { 
-            .main-layout { grid-template-columns: 1fr; } 
-            .navbar { padding: 10px 20px; flex-direction: column; gap: 15px; }
-        }
-
-        .card { 
-            background: var(--card-bg); 
-            padding: 20px; 
-            border-radius: 12px; 
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); 
-            margin-bottom: 20px;
-            border: 1px solid var(--border);
-        }
-
-        .calculator { 
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
-            border: 1px solid var(--primary); 
-            border-radius: 12px;
-            padding: 15px;
-            background: var(--card-bg);
-            margin-bottom: 20px;
         }
 
-        .time-display { 
-            font-size: 1.2rem; 
-            font-weight: bold; 
-            color: var(--accent); 
-        }
-
-        input[type="time"] {
-            background: #0f172a;
-            color: white;
-            border: 1px solid var(--border);
-            padding: 8px;
-            border-radius: 8px;
-        }
-
-        .tab-content {
+        .pokeball-checkbox {
             display: none;
-            animation: fadeIn 0.3s ease;
         }
 
-        .tab-content.active {
-            display: block;
+        .pokeball-icon {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 2px solid #64748b;
+            background: linear-gradient(180deg, #475569 50%, #1e293b 50%);
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
+        .pokeball-icon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: #1e293b;
+            border: 2px solid #64748b;
+            border-radius: 50%;
+            transition: all 0.3s ease;
         }
 
-        /* --- TABLAS --- */
-        .table-scroll { 
-            max-height: 65vh; 
-            overflow-y: auto; 
-            border-radius: 8px; 
+        .pokeball-checkbox:checked + .pokeball-icon {
+            border-color: #ef4444;
+            background: linear-gradient(180deg, #ef4444 48%, #ffffff 52%);
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+            transform: scale(1.1) rotate(360deg);
         }
 
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px; border-bottom: 1px solid var(--border); text-align: left; }
-        th { background: #0f172a; color: var(--primary); position: sticky; top: 0; z-index: 10; }
-
-        .gym-number { color: var(--accent); font-weight: bold; font-family: monospace; }
-
-        /* ICONOS */
-        .strategy-container { display: flex; align-items: center; gap: 12px; }
-        .poke-icon-wrapper { 
-            display: inline-flex; position: relative; background: rgba(255,255,255,0.1); 
-            border-radius: 50%; padding: 4px; width: 44px; height: 44px; justify-content: center; align-items: center;
+        .pokeball-checkbox:checked + .pokeball-icon::after {
+            background: #ffffff;
+            border-color: #111827;
+            box-shadow: 0 0 6px rgba(255,255,255,0.8);
         }
-        .poke-icon { width: 38px; height: 38px; object-fit: contain; }
-        .item-icon { width: 18px; height: 18px; position: absolute; bottom: -2px; right: -2px; background: #1e293b; border-radius: 50%; border: 1px solid var(--border); }
-        .note { color: var(--text-muted); font-size: 0.8rem; display: block; margin-top: 2px; }
 
-        .pdf-container { height: 85vh; border: 2px solid var(--border); border-radius: 12px; position: sticky; top: 80px; background: white; overflow: hidden; }
-        iframe { width: 100%; height: 100%; border: none; }
+        /* Toast Alert Container */
+        #toastContainer {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            flex-col;
+            gap: 10px;
+        }
     </style>
 </head>
-<body>
+<body class="bg-[#030712] text-slate-100 font-sans min-h-screen flex flex-col relative overflow-x-hidden selection:bg-brand-red selection:text-white">
 
-<nav class="navbar">
-    <div class="nav-logo">
-        <div class="logo-text">ESTRA<span>MIYU</span></div>
-    </div>
-    <div class="nav-links" id="tabs-menu">
+<!-- Canvas Ambient FX -->
+<canvas id="ambientCanvas"></canvas>
+
+<!-- Top Navbar -->
+<nav class="sticky top-0 z-40 glass-panel border-b border-slate-800/80 px-4 md:px-8 py-3">
+    <div class="max-w-[1850px] mx-auto flex flex-col lg:flex-row items-center justify-between gap-4 relative z-10">
+        
+        <!-- Brand Logo & Cat Mascot Badge -->
+        <div class="flex items-center gap-3">
+            <div class="relative group cursor-pointer">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-red-600 via-amber-500 to-yellow-400 flex items-center justify-center shadow-lg shadow-red-600/30 group-hover:scale-105 transition duration-300">
+                    <i class="fa-solid fa-cat text-slate-950 text-2xl group-hover:rotate-12 transition"></i>
+                </div>
+                <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                </span>
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <h1 class="font-orbitron font-black text-2xl tracking-wider text-white">
+                        Estra<span class="text-brand-red text-glow-red">GAtO</span>
+                    </h1>
+                    <span class="bg-red-500/10 border border-red-500/30 text-red-400 text-[10px] font-bold px-2 py-0.5 rounded-full font-mono uppercase">v2.0 Pro</span>
+                </div>
+                <p class="text-[10px] text-slate-400 font-semibold tracking-widest uppercase flex items-center gap-1">
+                    <i class="fa-solid fa-gamepad text-amber-400"></i> PokeMMO Farm & Gym Tracker
+                </p>
+            </div>
         </div>
-</nav>
 
-<div class="container">
-    <div class="main-layout">
-        <div>
-            <div class="calculator">
-                <span style="font-weight: bold; color: var(--text-muted);">⏱️ COOLDOWN:</span>
-                <input type="time" id="gymTime" onchange="updateGymTime()">
-                <div id="gymResult" class="time-display">Próximo: --:--</div>
+        <!-- Global Search & Filters Bar -->
+        <div class="flex flex-wrap items-center justify-center gap-3 w-full lg:w-auto">
+            <!-- Search Box -->
+            <div class="relative w-full sm:w-64 md:w-72">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Buscar gimnasio, líder o pkm..." 
+                    class="w-full pl-10 pr-8 py-2 text-xs bg-slate-950/80 border border-slate-700/80 rounded-xl text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-red focus:ring-2 focus:ring-brand-red/30 transition shadow-inner">
+                <button onclick="clearSearch()" id="clearSearchBtn" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white text-xs">
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </button>
             </div>
 
+            <!-- Completion Filter Tabs -->
+            <div class="flex bg-slate-950/80 p-1 rounded-xl border border-slate-800 text-xs font-semibold">
+                <button id="filter-all" onclick="setCompletionFilter('all')" class="px-3 py-1 rounded-lg text-amber-400 bg-slate-800 transition">Todos</button>
+                <button id="filter-pending" onclick="setCompletionFilter('pending')" class="px-3 py-1 rounded-lg text-slate-400 hover:text-slate-200 transition">Pendientes</button>
+                <button id="filter-done" onclick="setCompletionFilter('done')" class="px-3 py-1 rounded-lg text-slate-400 hover:text-slate-200 transition">Listos</button>
+            </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="flex flex-wrap justify-center gap-1.5 bg-slate-950/90 p-1.5 rounded-2xl border border-slate-800/80 shadow-inner" id="tabs-menu">
+            <!-- Region buttons populated dynamically -->
+        </div>
+    </div>
+</nav>
+
+<!-- Main Dashboard Container -->
+<main class="max-w-[1850px] mx-auto p-4 md:p-6 w-full flex-grow relative z-10 space-y-6">
+    
+    <!-- Top Progress Dashboard Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+        <!-- Global Completion Card -->
+        <div class="glass-panel p-4 rounded-2xl border border-slate-800 flex items-center gap-4 relative overflow-hidden group">
+            <div class="absolute -right-4 -bottom-4 text-slate-800/20 text-7xl font-black font-orbitron pointer-events-none group-hover:text-red-500/10 transition duration-500">
+                ALL
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500/20 to-red-700/10 border border-red-500/30 flex items-center justify-center text-brand-red text-xl shadow-lg shadow-red-500/10">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <div class="flex-grow z-10">
+                <div class="flex justify-between items-center text-xs font-bold mb-1.5">
+                    <span class="text-slate-300 uppercase tracking-wider">Progreso Global</span>
+                    <span id="global-count-text" class="text-brand-gold font-orbitron text-sm">0 / 0</span>
+                </div>
+                <div class="w-full bg-slate-950 rounded-full h-3 overflow-hidden p-0.5 border border-slate-800 shadow-inner">
+                    <div id="global-progress-bar" class="bg-gradient-to-r from-red-600 via-amber-500 to-yellow-400 h-2 rounded-full transition-all duration-700 ease-out w-0 shadow-lg shadow-red-500/50"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Region Progress Card -->
+        <div class="glass-panel p-4 rounded-2xl border border-slate-800 flex items-center gap-4 relative overflow-hidden group">
+            <div class="absolute -right-4 -bottom-4 text-slate-800/20 text-7xl font-black font-orbitron pointer-events-none group-hover:text-amber-500/10 transition duration-500" id="bg-region-code">
+                HO
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/20 to-yellow-600/10 border border-amber-500/30 flex items-center justify-center text-brand-gold text-xl shadow-lg shadow-amber-500/10">
+                <i class="fa-solid fa-map-location-dot"></i>
+            </div>
+            <div class="flex-grow z-10">
+                <div class="flex justify-between items-center text-xs font-bold mb-1.5">
+                    <span class="text-slate-300">Región: <span id="active-region-name" class="text-amber-400 font-orbitron">Hoenn</span></span>
+                    <span id="region-count-text" class="text-brand-gold font-orbitron text-sm">0 / 0</span>
+                </div>
+                <div class="w-full bg-slate-950 rounded-full h-3 overflow-hidden p-0.5 border border-slate-800 shadow-inner">
+                    <div id="region-progress-bar" class="bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-300 h-2 rounded-full transition-all duration-700 ease-out w-0 shadow-lg shadow-amber-500/50"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Intelligent Cooldown Timer (18h PokeMMO) -->
+        <div class="glass-panel p-4 rounded-2xl border border-slate-800 flex flex-col justify-between gap-2 relative overflow-hidden">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-lg shadow-lg shadow-indigo-500/10">
+                        <i class="fa-solid fa-stopwatch"></i>
+                    </div>
+                    <div>
+                        <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider block">Cooldown Gimnasios (18h)</span>
+                        <div id="gymResult" class="font-orbitron font-extrabold text-emerald-400 text-base tracking-wide">
+                            Disponible
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Controls -->
+                <div class="flex items-center gap-1.5">
+                    <button onclick="startCooldownNow()" title="Iniciar Cooldown 18h Ahora" class="px-2.5 py-1.5 bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-bold text-xs rounded-xl transition shadow-lg shadow-red-600/20 flex items-center gap-1">
+                        <i class="fa-solid fa-play text-[10px]"></i> Farmeado
+                    </button>
+                    <button onclick="resetCooldown()" title="Reiniciar Contador" class="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-400 hover:text-white rounded-xl text-xs transition">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Manual Input Time -->
+            <div class="flex items-center justify-between text-[11px] pt-1 border-t border-slate-800/80">
+                <span class="text-slate-400">¿Hora personalizada?</span>
+                <div class="flex items-center gap-2">
+                    <input type="time" id="gymTime" onchange="startCooldownFromInput()" class="bg-slate-950 border border-slate-700/80 text-slate-200 text-xs rounded-lg px-2 py-0.5 focus:outline-none focus:border-brand-red">
+                    <span id="nextAvailableText" class="text-slate-400 font-mono hidden">--:--</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Gym Tables Column -->
+        <div class="lg:col-span-7 xl:col-span-7 space-y-4">
             <div id="tabs-content-container"></div>
         </div>
 
-        <div class="pdf-container">
-            <iframe src="RUTA DE FARMEO_GYM_POKEMMO.pdf"></iframe>
+        <!-- Sticky Strategy PDF Viewer Column -->
+        <div class="lg:col-span-5 xl:col-span-5 sticky top-24 space-y-4">
+            <div class="glass-panel rounded-2xl border border-slate-800/90 p-3 shadow-2xl overflow-hidden relative">
+                
+                <div class="flex items-center justify-between px-2 pb-2.5 border-b border-slate-800/80 mb-2">
+                    <div class="flex items-center gap-2">
+                        <div class="p-1.5 bg-red-500/20 text-red-400 rounded-lg">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider">Ruta de Farmeo PokeMMO</h3>
+                            <p class="text-[10px] text-slate-400 font-mono">Guía oficial de movimientos y orden</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <a href="RUTA DE FARMEO_GYM_POKEMMO.pdf" target="_blank" class="px-2.5 py-1 bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/30 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition">
+                            <span>Abrir pestaña</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Embedded PDF Viewer -->
+                <div class="pdf-container h-[72vh] rounded-xl overflow-hidden bg-slate-950 border border-slate-800 shadow-inner relative group">
+                    <iframe src="RUTA DE FARMEO_GYM_POKEMMO.pdf" class="w-full h-full border-none"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Dynamic YouTube Strategy Search Modal -->
+<div id="videoModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden opacity-0 transition-all duration-300">
+    <div class="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl transform scale-95 transition-all duration-300" id="videoModalCard">
+        
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between p-4 border-b border-slate-800 bg-slate-950/90">
+            <div class="flex items-center gap-3">
+                <div class="p-2.5 rounded-xl bg-red-600/20 text-red-500 border border-red-500/30">
+                    <i class="fa-brands fa-youtube text-2xl"></i>
+                </div>
+                <div>
+                    <h3 id="modalTitle" class="font-orbitron font-bold text-slate-100 text-base md:text-lg">Buscador de Estrategia</h3>
+                    <p id="modalSubtitle" class="text-xs text-slate-400 font-mono">PokeMMO Gym Strategy Guide</p>
+                </div>
+            </div>
+            <button onclick="closeVideoModal()" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition border border-slate-700">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        
+        <!-- Modal Video Player Frame -->
+        <div class="p-4 bg-slate-950 space-y-4">
+            <div class="relative aspect-video bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
+                <iframe id="videoIframe" class="w-full h-full" src="" title="PokeMMO Gym Tutorial Search" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-900/90 p-3.5 rounded-xl border border-slate-800">
+                <div class="text-xs text-slate-300 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-amber-400 text-base"></i>
+                    <span>¿Prefieres ver múltiples opciones en YouTube directo?</span>
+                </div>
+                <a id="directYtSearchBtn" href="#" target="_blank" class="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition shadow-lg shadow-red-600/20">
+                    <i class="fa-brands fa-youtube text-lg"></i> Abrir en YouTube
+                </a>
+            </div>
+        </div>
+        
+        <!-- Modal Footer -->
+        <div class="p-3.5 bg-slate-950 border-t border-slate-800/80 text-xs text-slate-400 flex justify-between items-center">
+            <span id="modalGymDesc" class="font-mono text-slate-400">Guía de combate PokeMMO</span>
+            <button onclick="closeVideoModal()" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl font-semibold transition border border-slate-700">
+                Cerrar
+            </button>
         </div>
     </div>
 </div>
 
+<!-- Toast Alerts Container -->
+<div id="toastContainer"></div>
+
 <script>
+    // --- Ambient Particle Canvas Effect ---
+    (function initCanvas() {
+        const canvas = document.getElementById('ambientCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 2.5 + 0.5;
+                this.speedY = - (Math.random() * 0.6 + 0.2);
+                this.speedX = (Math.random() - 0.5) * 0.4;
+                this.opacity = Math.random() * 0.6 + 0.2;
+                this.color = Math.random() > 0.4 ? '#ff3b3b' : '#fbbf24';
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                if (this.y < -10 || this.x < -10 || this.x > width + 10) {
+                    this.reset();
+                    this.y = height + 10;
+                }
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.opacity;
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        for (let i = 0; i < 45; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    })();
+
+    // --- Pokémon & Items Data ---
     const POKES = {
         tork: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/324.png',
         blast: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/9.png',
@@ -217,138 +514,454 @@
     };
 
     function icon(p, item) {
-        let itemImg = item ? `<img src="${POKES[item]}" class="item-icon">` : '';
-        return `<div class="poke-icon-wrapper"><img src="${POKES[p]}" class="poke-icon">${itemImg}</div>`;
+        let itemImg = item ? `<img src="${POKES[item]}" class="item-icon" title="${item}">` : '';
+        return `<div class="poke-icon-wrapper" title="${p}"><img src="${POKES[p]}" class="poke-icon" alt="${p}">${itemImg}</div>`;
     }
 
+    // --- Complete Gym Data ---
     const data = [
-        { r: 'Hoenn', gyms: [
-            { n: 'Algararia (Vito/Leti)', s: icon('tork','typh')+icon('heatran','arch'), m: 'Typhosion + archops' },
-            { n: 'Lavacalda (Candela)', s: icon('arch')+icon('blast'), m: 'Arch/Blast directo' },
-            { n: 'Arborada (Alana)', s: icon('arch')+icon('typh','specs'), m: 'Arch/Gafas - RESET PC' },
-            { n: 'Malvalona (Erico)', s: icon('heatran','scarf')+icon('blast'), m: 'Scarf/Blast. Reset PC' },
-            { n: 'Azuliza (Marcial)', s: icon('tork')+icon('arch'), m: 'Scarf/Arch' },
-            { n: 'Petalia (Norman)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork/Scarf a Gafas/Arch' },
-            { n: 'Férrica (Petra)', s: icon('arch')+icon('blast'), m: 'Estrategia mixta' },
-            { n: 'Arrecípolis (Plubio)', s: icon('tork')+icon('arch'), m: 'Tork/Scarf a Gafas/Arch' }
+        { r: 'Hoenn', code: 'HO', gyms: [
+            { n: 'Algararia (Vito/Leti)', s: icon('tork','typh')+icon('heatran','arch'), m: 'Typhlosion + Archops' },
+            { n: 'Lavacalda (Candela)', s: icon('arch')+icon('blast'), m: 'Arch / Blast directo' },
+            { n: 'Arborada (Alana)', s: icon('arch')+icon('typh','specs'), m: 'Arch / Gafas - RESET PC' },
+            { n: 'Malvalona (Erico)', s: icon('heatran','scarf')+icon('blast'), m: 'Scarf / Blast - Reset PC' },
+            { n: 'Azuliza (Marcial)', s: icon('tork')+icon('arch'), m: 'Scarf / Arch' },
+            { n: 'Petalia (Norman)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork / Scarf a Gafas / Arch' },
+            { n: 'Férrica (Petra)', s: icon('arch')+icon('blast'), m: 'Estrategia mixta Roca/Agua' },
+            { n: 'Arrecípolis (Plubio)', s: icon('tork')+icon('arch'), m: 'Tork / Scarf a Gafas / Arch' }
         ]},
-        { r: 'Teselia', gyms: [
-            { n: 'Porcelana (Camus)', s: icon('heatran','scarf')+icon('blast'), m: 'Scarf/Blast' },
-            { n: 'Mayólica (Camila)', s: icon('heatran','scarf')+icon('arch'), m: 'Scarf/Arch' },
-            { n: 'Fayenza (Yakón)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork/Scarf a Gafas/Blast' },
-            { n: 'Gres (Fuego)', s: icon('typh','specs')+icon('blast'), m: 'Gafas/Blast' },
-            { n: 'Gres (Planta)', s: icon('heatran','scarf')+icon('arch'), m: 'Scarf/Arch' },
-            { n: 'Gres (Agua)', s: icon('tork')+icon('arch'), m: 'Tork/Arch -> Typh/Heatran' },
-            { n: 'Loza (Gerania)', s: icon('heatran','scarf')+icon('blast'), m: 'Scarf/Blast' },
-            { n: 'Teja (Junco)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Uso de Typh/Heatran directo' },
+        { r: 'Teselia', code: 'TE', gyms: [
+            { n: 'Porcelana (Camus)', s: icon('heatran','scarf')+icon('blast'), m: 'Scarf / Blast' },
+            { n: 'Mayólica (Camila)', s: icon('heatran','scarf')+icon('arch'), m: 'Scarf / Arch' },
+            { n: 'Fayenza (Yakón)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork / Scarf a Gafas / Blast' },
+            { n: 'Gres (Fuego)', s: icon('typh','specs')+icon('blast'), m: 'Gafas / Blast' },
+            { n: 'Gres (Planta)', s: icon('heatran','scarf')+icon('arch'), m: 'Scarf / Arch' },
+            { n: 'Gres (Agua)', s: icon('tork')+icon('arch'), m: 'Tork / Arch -> Typh / Heatran' },
+            { n: 'Loza (Gerania)', s: icon('heatran','scarf')+icon('blast'), m: 'Scarf / Blast' },
+            { n: 'Teja (Junco)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Typh / Heatran directo' },
             { n: 'Caolín (Lirio/Iris)', s: icon('tork')+icon('arch'), m: 'VIENTO AFORTUNADO -> Typh/Heatran' },
             { n: 'Esmalte (Mixto)', s: icon('tork')+icon('typh','specs'), m: 'Torkoal + Typhlosion (Gafas)' }
         ]},
-        { r: 'Johto', gyms: [
-            { n: 'Violeta (Pegaso)', s: icon('heatran','scarf')+icon('blast'), m: 'Scarf/Blast' },
-            { n: 'Olivo (Yasmina)', s: icon('typh','specs')+icon('arch'), m: 'Gafas/Arch' },
+        { r: 'Johto', code: 'JO', gyms: [
+            { n: 'Violeta (Pegaso)', s: icon('heatran','scarf')+icon('blast'), m: 'Scarf / Blast' },
+            { n: 'Olivo (Yasmina)', s: icon('typh','specs')+icon('arch'), m: 'Gafas / Arch' },
             { n: 'Azalea (Antón)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Si Tyranitar -> Tork (Explota)' },
-            { n: 'Iris (Morti)', s: icon('typh','specs')+icon('arch'), m: 'Gafas/Arch' },
-            { n: 'Caoba (Fredo)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Typh/Heatran - RESET PC' },
-            { n: 'Trigal (Blanca)', s: icon('typh','specs')+icon('arch'), m: 'Gafas/Arch' },
-            { n: 'Endrino (Débora)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork/Scarf a Gafas/Arch' },
-            { n: 'Orquídea (Aníbal)', s: icon('heatran','scarf')+icon('arch'), m: 'Scarf/Arch' }
+            { n: 'Iris (Morti)', s: icon('typh','specs')+icon('arch'), m: 'Gafas / Arch' },
+            { n: 'Caoba (Fredo)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Typh / Heatran - RESET PC' },
+            { n: 'Trigal (Blanca)', s: icon('typh','specs')+icon('arch'), m: 'Gafas / Arch' },
+            { n: 'Endrino (Débora)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork / Scarf a Gafas / Arch' },
+            { n: 'Orquídea (Aníbal)', s: icon('heatran','scarf')+icon('arch'), m: 'Scarf / Arch' }
         ]},
-        { r: 'Sinnoh', gyms: [
-            { n: 'Rocavelo (Brega)', s: icon('typh','specs')+icon('arch'), m: 'Gafas/Arch - CAMBIAR CANAL' },
+        { r: 'Sinnoh', code: 'SI', gyms: [
+            { n: 'Rocavelo (Brega)', s: icon('typh','specs')+icon('arch'), m: 'Gafas / Arch - CAMBIAR CANAL' },
             { n: 'Pirita (Roco)', s: icon('arch')+icon('blast'), m: 'Si cae -> Typhlosion (Gafas)' },
-            { n: 'Vetusta (Gardenia)', s: icon('heatran','scarf')+icon('arch'), m: 'Scarf/Arch' },
+            { n: 'Vetusta (Gardenia)', s: icon('heatran','scarf')+icon('arch'), m: 'Scarf / Arch' },
             { n: 'Puntaneva (Inverna)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Si Heatran/Regirock -> Blast/Arch' },
-            { n: 'Canal (Acerón)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork/Scarf a Gafas/Blast' },
+            { n: 'Canal (Acerón)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork / Scarf a Gafas / Blast' },
             { n: 'Marina (Lectro)', s: icon('arch')+icon('blast'), m: 'Si Lanturn 1ro -> Blast a Tork' },
-            { n: 'Corazón (Fantina)', s: icon('typh','specs')+icon('arch'), m: 'Gafas/Arch' },
+            { n: 'Corazón (Fantina)', s: icon('typh','specs')+icon('arch'), m: 'Gafas / Arch' },
             { n: 'Pradera (Mananti)', s: icon('tork')+icon('arch'), m: 'Arch cae -> Blast -> Typh/Heatran' }
         ]},
-        { r: 'Kanto', gyms: [
+        { r: 'Kanto', code: 'KA', gyms: [
             { n: 'Azulona (Erika)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Si cae -> Archeops. RESET PC' },
             { n: 'Carmín (Lt. Surge)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Si Lluvia -> Scarf a Tork' },
             { n: 'Plateada (Brock)', s: icon('arch')+icon('blast'), m: 'Si Toxicroak -> Blast a Scarf' },
-            { n: 'Celeste (Misty)', s: icon('arch')+icon('blast'), m: 'Arch/Blast' },
-            { n: 'Fucsia (Koga)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork/Scarf a Gafas/Arch' },
+            { n: 'Celeste (Misty)', s: icon('arch')+icon('blast'), m: 'Arch / Blast' },
+            { n: 'Fucsia (Koga)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork / Scarf a Gafas / Arch' },
             { n: 'Azafrán (Sabrina)', s: icon('typh','specs')+icon('heatran','scarf'), m: 'Typh Specs + Heatran Scarf' },
-            { n: 'Canela (Blaine)', s: icon('arch')+icon('blast'), m: 'Arch/Blast' },
-            { n: 'Verde (Azul)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork/Scarf a Gafas/Arch' }
+            { n: 'Canela (Blaine)', s: icon('arch')+icon('blast'), m: 'Arch / Blast' },
+            { n: 'Verde (Azul)', s: icon('tork')+icon('heatran','scarf'), m: 'Tork / Scarf a Gafas / Arch' }
         ]}
     ];
 
+    let activeRegionIndex = 0;
+    let timerInterval = null;
+    let currentCompletionFilter = 'all';
+
+    // --- Render Tabs & Content ---
     const tabsMenu = document.getElementById('tabs-menu');
     const tabsContent = document.getElementById('tabs-content-container');
 
     data.forEach((region, index) => {
-        // Crear botones de la Navbar
+        // Nav Button
         const btn = document.createElement('button');
-        btn.className = `nav-item ${index === 0 ? 'active' : ''}`;
+        btn.className = `px-3.5 py-1.5 rounded-xl text-xs font-bold tracking-wider transition-all duration-300 ${index === 0 ? 'bg-gradient-to-r from-red-600 to-amber-600 text-white shadow-lg shadow-red-600/30 font-orbitron' : 'text-slate-400 hover:text-white hover:bg-slate-900'}`;
         btn.innerText = region.r;
         btn.onclick = () => openTab(index);
         btn.id = `btn-${index}`;
         tabsMenu.appendChild(btn);
 
-        // Crear contenido de tablas
+        // Content Container
         const div = document.createElement('div');
-        div.className = `tab-content ${index === 0 ? 'active' : ''}`;
+        div.className = `tab-content ${index === 0 ? 'block' : 'hidden'} space-y-3`;
         div.id = `tab-${index}`;
         
-        let tableHtml = `
-            <div class="card">
-                <h3 style="margin-top:0; color:var(--primary)">⚔️ Líderes de ${region.r}</h3>
-                <div class="table-scroll">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 30px;">#</th>
-                                <th style="width: 40px;">✓</th>
-                                <th>Gimnasio</th>
-                                <th>Estrategia</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
+        let regionCardHtml = `
+            <div class="glass-panel rounded-2xl border border-slate-800/90 p-4 md:p-5 shadow-2xl">
+                <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 mb-4">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-3 h-3 rounded-full bg-brand-red shadow-lg shadow-red-500/80 animate-pulse"></span>
+                        <h2 class="text-base md:text-lg font-orbitron font-extrabold text-slate-100">
+                            Gimnasios de ${region.r}
+                        </h2>
+                    </div>
+                    <span class="text-xs font-mono font-bold text-slate-400 bg-slate-950 px-3 py-1 rounded-full border border-slate-800">
+                        ${region.gyms.length} Líderes
+                    </span>
+                </div>
+                
+                <div class="space-y-3 max-h-[66vh] overflow-y-auto pr-1">`;
         
         region.gyms.forEach((g, i) => {
-            const gymId = g.n.replace(/\s/g, '');
-            const checked = localStorage.getItem(gymId) === 'true' ? 'checked' : '';
-            tableHtml += `
-                <tr>
-                    <td class="gym-number">${i + 1}</td>
-                    <td><input type="checkbox" id="${gymId}" ${checked} onchange="saveCheck('${gymId}')"></td>
-                    <td style="font-weight:600">${g.n}</td>
-                    <td>
-                        <div class="strategy-container">
-                            ${g.s}
-                            <div><span class="note">${g.m}</span></div>
+            const gymId = g.n.replace(/[^a-zA-Z0-9]/g, '');
+            const isChecked = localStorage.getItem(gymId) === 'true';
+            
+            regionCardHtml += `
+                <div class="gym-row glass-card ${isChecked ? 'completed' : ''} rounded-2xl p-3.5 border flex flex-col gap-2.5" 
+                     id="card-${gymId}"
+                     data-name="${g.n.toLowerCase()}" 
+                     data-region="${region.r.toLowerCase()}"
+                     data-checked="${isChecked}">
+                    
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <!-- Custom Pokeball Checkbox -->
+                            <label class="pokeball-checkbox-label" title="Marcar como farmeado">
+                                <input type="checkbox" id="${gymId}" ${isChecked ? 'checked' : ''} class="pokeball-checkbox" onchange="toggleGymCheck('${gymId}', ${index})">
+                                <span class="pokeball-icon"></span>
+                            </label>
+                            
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-orbitron text-[11px] font-bold text-amber-400">#0${i + 1}</span>
+                                    <label for="${gymId}" class="font-bold text-slate-100 text-sm md:text-base cursor-pointer hover:text-brand-red transition">
+                                        ${g.n}
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-                    </td>
-                </tr>`;
+
+                        <!-- Video Modal Button -->
+                        <button onclick="openVideoModal('${g.n.replace(/'/g, "\\'")}', '${region.r}')" class="px-3 py-1.5 rounded-xl bg-red-600/10 hover:bg-red-600/20 text-red-400 border border-red-500/20 text-xs font-bold flex items-center gap-2 transition shadow-sm">
+                            <i class="fa-brands fa-youtube text-red-500 text-sm"></i> 
+                            <span class="hidden sm:inline">Estrategia</span> YT
+                        </button>
+                    </div>
+                    
+                    <!-- Squad and Notes Row -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800/60 mt-0.5">
+                        <div class="flex items-center gap-2">
+                            ${g.s}
+                        </div>
+                        <div class="text-xs text-slate-300 bg-slate-950/90 px-3 py-1.5 rounded-xl border border-slate-800 font-mono flex items-center gap-2 shadow-inner">
+                            <span class="text-amber-400">⚡</span> <span>${g.m}</span>
+                        </div>
+                    </div>
+                </div>`;
         });
 
-        tableHtml += `</tbody></table></div></div>`;
-        div.innerHTML = tableHtml;
+        regionCardHtml += `</div></div>`;
+        div.innerHTML = regionCardHtml;
         tabsContent.appendChild(div);
     });
 
+    // --- Tab Navigation logic ---
     function openTab(index) {
-        document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(tb => tb.classList.remove('active'));
-        document.getElementById(`tab-${index}`).classList.add('active');
-        document.getElementById(`btn-${index}`).classList.add('active');
+        activeRegionIndex = index;
+        document.querySelectorAll('.tab-content').forEach(tc => {
+            tc.classList.add('hidden');
+            tc.classList.remove('block');
+        });
+        document.querySelectorAll('#tabs-menu button').forEach(tb => {
+            tb.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold tracking-wider transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-900';
+        });
+        
+        const targetTab = document.getElementById(`tab-${index}`);
+        if(targetTab) {
+            targetTab.classList.remove('hidden');
+            targetTab.classList.add('block');
+        }
+        
+        const targetBtn = document.getElementById(`btn-${index}`);
+        if(targetBtn) {
+            targetBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold tracking-wider transition-all duration-300 bg-gradient-to-r from-red-600 to-amber-600 text-white shadow-lg shadow-red-600/30 font-orbitron';
+        }
+
+        document.getElementById('active-region-name').innerText = data[index].r;
+        document.getElementById('bg-region-code').innerText = data[index].code;
+        updateProgress();
+        applyCompletionFilter();
     }
 
-    function saveCheck(id) { localStorage.setItem(id, document.getElementById(id).checked); }
-
-    function updateGymTime() {
-        const val = document.getElementById('gymTime').value;
-        if (!val) return;
-        let [h, m] = val.split(':').map(Number);
-        let nh = (h + 18) % 24;
-        let ampm = nh >= 12 ? 'PM' : 'AM';
-        nh = nh % 12 || 12;
-        document.getElementById('gymResult').innerText = `Próximo: ${nh}:${m < 10 ? '0'+m : m} ${ampm}`;
+    // --- Toggle Gym Check state ---
+    function toggleGymCheck(id, regionIdx) {
+        const checkbox = document.getElementById(id);
+        const card = document.getElementById(`card-${id}`);
+        
+        if(checkbox && card) {
+            const isChecked = checkbox.checked;
+            localStorage.setItem(id, isChecked);
+            card.setAttribute('data-checked', isChecked);
+            
+            if (isChecked) {
+                card.classList.add('completed');
+                showToast(`Gimnasio completado`, 'success');
+            } else {
+                card.classList.remove('completed');
+            }
+        }
+        updateProgress();
+        applyCompletionFilter();
     }
+
+    // --- Dynamic Progress Calculator ---
+    function updateProgress() {
+        let totalGyms = 0;
+        let checkedGyms = 0;
+        let currentRegionTotal = 0;
+        let currentRegionChecked = 0;
+
+        data.forEach((region, rIdx) => {
+            region.gyms.forEach(g => {
+                const gymId = g.n.replace(/[^a-zA-Z0-9]/g, '');
+                const isChecked = localStorage.getItem(gymId) === 'true';
+                
+                totalGyms++;
+                if (isChecked) checkedGyms++;
+
+                if (rIdx === activeRegionIndex) {
+                    currentRegionTotal++;
+                    if (isChecked) currentRegionChecked++;
+                }
+            });
+        });
+
+        document.getElementById('global-count-text').innerText = `${checkedGyms} / ${totalGyms}`;
+        const globalPct = totalGyms > 0 ? (checkedGyms / totalGyms) * 100 : 0;
+        document.getElementById('global-progress-bar').style.width = `${globalPct}%`;
+
+        document.getElementById('region-count-text').innerText = `${currentRegionChecked} / ${currentRegionTotal}`;
+        const regionPct = currentRegionTotal > 0 ? (currentRegionChecked / currentRegionTotal) * 100 : 0;
+        document.getElementById('region-progress-bar').style.width = `${regionPct}%`;
+    }
+
+    // --- Cooldown Timer Functions (18 Hours) ---
+    function startCooldownNow() {
+        const targetTime = new Date().getTime() + (18 * 60 * 60 * 1000);
+        localStorage.setItem('pokemmo_cooldown_target', targetTime);
+        showToast('Cooldown de 18h iniciado', 'info');
+        runTimer();
+    }
+
+    function startCooldownFromInput() {
+        const timeVal = document.getElementById('gymTime').value;
+        if (!timeVal) return;
+
+        const [hours, minutes] = timeVal.split(':').map(Number);
+        const targetTime = new Date();
+        targetTime.setHours(hours, minutes, 0, 0);
+
+        // Add 18 hours from entered time
+        targetTime.setTime(targetTime.getTime() + (18 * 60 * 60 * 1000));
+        
+        localStorage.setItem('pokemmo_cooldown_target', targetTime.getTime());
+        showToast('Cooldown ajustado manualmente', 'info');
+        runTimer();
+    }
+
+    function resetCooldown() {
+        localStorage.removeItem('pokemmo_cooldown_target');
+        document.getElementById('gymTime').value = '';
+        document.getElementById('gymResult').innerText = 'Disponible';
+        document.getElementById('gymResult').className = 'font-orbitron font-extrabold text-emerald-400 text-base tracking-wide';
+        document.getElementById('nextAvailableText').classList.add('hidden');
+        if(timerInterval) clearInterval(timerInterval);
+        showToast('Cooldown reiniciado', 'warning');
+    }
+
+    function runTimer() {
+        if(timerInterval) clearInterval(timerInterval);
+
+        const savedTarget = localStorage.getItem('pokemmo_cooldown_target');
+        if (!savedTarget) {
+            document.getElementById('gymResult').innerText = 'Disponible';
+            document.getElementById('gymResult').className = 'font-orbitron font-extrabold text-emerald-400 text-base tracking-wide';
+            document.getElementById('nextAvailableText').classList.add('hidden');
+            return;
+        }
+
+        const targetTime = parseInt(savedTarget, 10);
+        const availableDate = new Date(targetTime);
+        const formatTime = availableDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        const nextText = document.getElementById('nextAvailableText');
+        nextText.innerText = `Listo a las ${formatTime}`;
+        nextText.classList.remove('hidden');
+
+        timerInterval = setInterval(() => {
+            const now = new Date().getTime();
+            const diff = targetTime - now;
+
+            if (diff <= 0) {
+                clearInterval(timerInterval);
+                document.getElementById('gymResult').innerText = '¡LISTO PARA FARMEAR!';
+                document.getElementById('gymResult').className = 'font-orbitron font-extrabold text-emerald-400 text-base animate-pulse tracking-wide';
+                localStorage.removeItem('pokemmo_cooldown_target');
+                showToast('¡Los gimnasios han reaparecido!', 'success');
+                return;
+            }
+
+            const hrs = Math.floor(diff / (1000 * 60 * 60));
+            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+            const pad = (n) => n < 10 ? '0' + n : n;
+            document.getElementById('gymResult').innerText = `${pad(hrs)}h ${pad(mins)}m ${pad(secs)}s`;
+            document.getElementById('gymResult').className = 'font-orbitron font-extrabold text-amber-400 text-base tracking-wide';
+        }, 1000);
+    }
+
+    // --- Search & Filter Logic ---
+    function handleSearch() {
+        const query = document.getElementById('searchInput').value.toLowerCase().trim();
+        const clearBtn = document.getElementById('clearSearchBtn');
+        
+        if (query.length > 0) {
+            clearBtn.classList.remove('hidden');
+        } else {
+            clearBtn.classList.add('hidden');
+        }
+
+        const rows = document.querySelectorAll('.gym-row');
+        rows.forEach(row => {
+            const name = row.getAttribute('data-name');
+            const matchesSearch = name.includes(query);
+            
+            if (matchesSearch) {
+                row.style.display = 'flex';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    function clearSearch() {
+        document.getElementById('searchInput').value = '';
+        handleSearch();
+    }
+
+    function setCompletionFilter(filter) {
+        currentCompletionFilter = filter;
+        
+        ['all', 'pending', 'done'].forEach(f => {
+            const btn = document.getElementById(`filter-${f}`);
+            if (f === filter) {
+                btn.className = 'px-3 py-1 rounded-lg text-amber-400 bg-slate-800 transition font-bold';
+            } else {
+                btn.className = 'px-3 py-1 rounded-lg text-slate-400 hover:text-slate-200 transition';
+            }
+        });
+
+        applyCompletionFilter();
+    }
+
+    function applyCompletionFilter() {
+        const rows = document.querySelectorAll('#tab-' + activeRegionIndex + ' .gym-row');
+        
+        rows.forEach(row => {
+            const isChecked = row.getAttribute('data-checked') === 'true';
+            
+            if (currentCompletionFilter === 'all') {
+                row.style.display = 'flex';
+            } else if (currentCompletionFilter === 'pending' && !isChecked) {
+                row.style.display = 'flex';
+            } else if (currentCompletionFilter === 'done' && isChecked) {
+                row.style.display = 'flex';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    // --- YouTube Strategy Search Modal ---
+    function openVideoModal(gymName, regionName) {
+        const modal = document.getElementById('videoModal');
+        const card = document.getElementById('videoModalCard');
+        const iframe = document.getElementById('videoIframe');
+        const directBtn = document.getElementById('directYtSearchBtn');
+
+        const searchQuery = `PokeMMO gimnasio ${gymName} ${regionName} estrategia`;
+        const encodedQuery = encodeURIComponent(searchQuery);
+
+        const embedUrl = `https://www.youtube.com/embed?listType=search&list=${encodedQuery}`;
+        const searchUrl = `https://www.youtube.com/results?search_query=${encodedQuery}`;
+
+        document.getElementById('modalTitle').innerText = `${gymName} (${regionName})`;
+        document.getElementById('modalSubtitle').innerText = `Estrategia PokeMMO`;
+        document.getElementById('modalGymDesc').innerText = `Búsqueda dinámica: "${searchQuery}"`;
+
+        iframe.src = embedUrl;
+        directBtn.href = searchUrl;
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            card.classList.remove('scale-95');
+            card.classList.add('scale-100');
+        }, 10);
+    }
+
+    function closeVideoModal() {
+        const modal = document.getElementById('videoModal');
+        const card = document.getElementById('videoModalCard');
+        const iframe = document.getElementById('videoIframe');
+
+        modal.classList.add('opacity-0');
+        card.classList.remove('scale-100');
+        card.classList.add('scale-95');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            iframe.src = '';
+        }, 300);
+    }
+
+    // --- Toast Notifications ---
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        
+        let colorClass = 'bg-slate-900 border-indigo-500/50 text-indigo-300';
+        let iconClass = 'fa-circle-info';
+
+        if (type === 'success') {
+            colorClass = 'bg-slate-900 border-emerald-500/50 text-emerald-400';
+            iconClass = 'fa-circle-check';
+        } else if (type === 'warning') {
+            colorClass = 'bg-slate-900 border-amber-500/50 text-amber-400';
+            iconClass = 'fa-triangle-exclamation';
+        }
+
+        toast.className = `flex items-center gap-2 px-4 py-2.5 rounded-xl border ${colorClass} shadow-2xl text-xs font-semibold backdrop-blur-md transform translate-y-4 opacity-0 transition-all duration-300`;
+        toast.innerHTML = `<i class="fa-solid ${iconClass}"></i> <span>${message}</span>`;
+        
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.remove('translate-y-4', 'opacity-0');
+        }, 10);
+
+        setTimeout(() => {
+            toast.classList.add('opacity-0', 'translate-y-2');
+            setTimeout(() => toast.remove(), 300);
+        }, 2500);
+    }
+
+    // --- Initialization ---
+    window.onload = function() {
+        updateProgress();
+        runTimer();
+    };
 </script>
 </body>
 </html>
-
