@@ -56,8 +56,8 @@
             box-shadow: 0 0 10px #ff3b3b;
         }
 
-        /* Ambient Canvas Background */
-        #ambientCanvas {
+        /* Ambient Canvas Background Fix */
+        #bgCanvas {
             position: fixed;
             top: 0;
             left: 0;
@@ -65,7 +65,6 @@
             height: 100vh;
             pointer-events: none;
             z-index: 0;
-            opacity: 0.45;
         }
 
         /* Glassmorphism Panels */
@@ -97,10 +96,6 @@
 
         .text-glow-red {
             text-shadow: 0 0 14px rgba(255, 59, 59, 0.75), 0 0 25px rgba(255, 59, 59, 0.3);
-        }
-
-        .text-glow-gold {
-            text-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
         }
 
         /* Sprite Icon Styling */
@@ -203,15 +198,15 @@
             right: 20px;
             z-index: 100;
             display: flex;
-            flex-col;
+            flex-direction: column;
             gap: 10px;
         }
     </style>
 </head>
 <body class="bg-[#030712] text-slate-100 font-sans min-h-screen flex flex-col relative overflow-x-hidden selection:bg-brand-red selection:text-white">
 
-<!-- Canvas Ambient FX -->
-<canvas id="ambientCanvas"></canvas>
+<!-- Canvas Ambient Animated Background -->
+<canvas id="bgCanvas"></canvas>
 
 <!-- Top Navbar -->
 <nav class="sticky top-0 z-40 glass-panel border-b border-slate-800/80 px-4 md:px-8 py-3">
@@ -241,7 +236,7 @@
             </div>
         </div>
 
-        <!-- Global Search & Filters Bar -->
+        <!-- Global Search, Filters & Actions Bar -->
         <div class="flex flex-wrap items-center justify-center gap-3 w-full lg:w-auto">
             <!-- Search Box -->
             <div class="relative w-full sm:w-64 md:w-72">
@@ -259,6 +254,12 @@
                 <button id="filter-pending" onclick="setCompletionFilter('pending')" class="px-3 py-1 rounded-lg text-slate-400 hover:text-slate-200 transition">Pendientes</button>
                 <button id="filter-done" onclick="setCompletionFilter('done')" class="px-3 py-1 rounded-lg text-slate-400 hover:text-slate-200 transition">Listos</button>
             </div>
+
+            <!-- Integrated Clear All Completed Gyms Button -->
+            <button onclick="clearAllGyms()" title="Desmarcar todos los gimnasios completados" class="px-3 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-500/30 hover:border-red-500/60 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md">
+                <i class="fa-solid fa-trash-can"></i>
+                <span>Limpiar Marcados</span>
+            </button>
         </div>
 
         <!-- Tabs Navigation -->
@@ -441,66 +442,72 @@
 
 <script>
     // --- Ambient Particle Canvas Effect ---
-    (function initCanvas() {
-        const canvas = document.getElementById('ambientCanvas');
-        const ctx = canvas.getContext('2d');
-        let width, height;
-        let particles = [];
+    const bgCanvas = document.getElementById('bgCanvas');
+    const ctx = bgCanvas.getContext('2d');
+    let particles = [];
+    const numParticles = 55;
 
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
+    function resizeCanvas() {
+        bgCanvas.width = window.innerWidth;
+        bgCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+        constructor() {
+            this.reset();
         }
-        window.addEventListener('resize', resize);
-        resize();
 
-        class Particle {
-            constructor() {
+        reset() {
+            this.x = Math.random() * bgCanvas.width;
+            this.y = Math.random() * bgCanvas.height;
+            this.radius = Math.random() * 2 + 0.8;
+            this.speedX = (Math.random() - 0.5) * 0.5;
+            this.speedY = - (Math.random() * 0.5 + 0.2);
+            this.alpha = Math.random() * 0.5 + 0.2;
+            this.color = Math.random() > 0.4 ? '255, 59, 59' : '251, 191, 36';
+        }
+
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+
+            if (this.y < 0 || this.x < 0 || this.x > bgCanvas.width) {
                 this.reset();
-            }
-            reset() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.size = Math.random() * 2.5 + 0.5;
-                this.speedY = - (Math.random() * 0.6 + 0.2);
-                this.speedX = (Math.random() - 0.5) * 0.4;
-                this.opacity = Math.random() * 0.6 + 0.2;
-                this.color = Math.random() > 0.4 ? '#ff3b3b' : '#fbbf24';
-            }
-            update() {
-                this.y += this.speedY;
-                this.x += this.speedX;
-                if (this.y < -10 || this.x < -10 || this.x > width + 10) {
-                    this.reset();
-                    this.y = height + 10;
-                }
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.globalAlpha = this.opacity;
-                ctx.shadowBlur = 8;
-                ctx.shadowColor = this.color;
-                ctx.fill();
-                ctx.globalAlpha = 1;
+                this.y = bgCanvas.height;
             }
         }
 
-        for (let i = 0; i < 45; i++) {
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${this.color}, ${this.alpha})`;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = `rgba(${this.color}, 0.8)`;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+    }
+
+    function initParticles() {
+        particles = [];
+        for (let i = 0; i < numParticles; i++) {
             particles.push(new Particle());
         }
+    }
 
-        function animate() {
-            ctx.clearRect(0, 0, width, height);
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-            requestAnimationFrame(animate);
-        }
-        animate();
-    })();
+    function animateParticles() {
+        ctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+        particles.forEach(p => {
+            p.update();
+            p.draw();
+        });
+        requestAnimationFrame(animateParticles);
+    }
+
+    initParticles();
+    animateParticles();
 
     // --- Pokémon & Items Data ---
     const POKES = {
@@ -712,6 +719,33 @@
         }
         updateProgress();
         applyCompletionFilter();
+    }
+
+    // --- Clear All Gyms Function ---
+    function clearAllGyms() {
+        if (!confirm('¿Estás seguro de que deseas desmarcar todos los gimnasios completados?')) {
+            return;
+        }
+
+        data.forEach(region => {
+            region.gyms.forEach(g => {
+                const gymId = g.n.replace(/[^a-zA-Z0-9]/g, '');
+                localStorage.removeItem(gymId);
+                
+                const checkbox = document.getElementById(gymId);
+                const card = document.getElementById(`card-${gymId}`);
+                
+                if (checkbox) checkbox.checked = false;
+                if (card) {
+                    card.classList.remove('completed');
+                    card.setAttribute('data-checked', 'false');
+                }
+            });
+        });
+
+        updateProgress();
+        applyCompletionFilter();
+        showToast('Todos los gimnasios han sido limpiados', 'warning');
     }
 
     // --- Dynamic Progress Calculator ---
