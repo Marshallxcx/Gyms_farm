@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeMMO PvP - Calculadora de Eventos</title>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#ff3b3b',
+                            amber: '#f59e0b',
+                            dark: '#030712'
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg-color: #030712;
+            --panel-bg: rgba(11, 19, 41, 0.75);
+            --text-color: #f1f5f9;
+            --accent-color: #ff3b3b; 
+        }
+
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030712;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 59, 59, 0.2);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff3b3b;
+            box-shadow: 0 0 10px #ff3b3b;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            text-align: center;
+            margin: 0;
+            padding: 0 0 30px 0;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        .glass-panel {
+            background: rgba(11, 19, 41, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        h1 { 
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent-color); 
+            text-shadow: 0 0 14px rgba(255, 59, 59, 0.75); 
+            margin-top: 25px;
+            margin-bottom: 25px; 
+            font-size: 2.2rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .main-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 10;
+            padding: 0 15px;
+        }
+        
+        .team-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            width: 100%;
+            max-width: 700px;
+            border: 1px solid rgba(255, 59, 59, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            background-color: rgba(11, 19, 41, 0.75);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        }
+        
+        .team-title {
+            width: 100%;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+        }
+
+        .card {
+            background-color: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 15px;
+            width: 280px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            border-color: rgba(255, 59, 59, 0.5);
+            box-shadow: 0 10px 30px -5px rgba(255, 59, 59, 0.25), 0 0 15px rgba(251, 191, 36, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .search-area {
+            display: flex;
+            width: 100%;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        input {
+            padding: 9px 12px;
+            width: 100%;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(3, 7, 18, 0.8);
+            color: white;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        input:focus {
+            border-color: #ff3b3b;
+            box-shadow: 0 0 10px rgba(255, 59, 59, 0.3);
+        }
+        
+        button {
+            padding: 9px 14px;
+            background: linear-gradient(135deg, #ff3b3b, #f59e0b);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 12px rgba(255, 59, 59, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        button:hover { 
+            filter: brightness(1.2);
+            transform: scale(1.03);
+        }
+        
+        .pokemon-img {
+            width: 120px;
+            height: 120px;
+            image-rendering: pixelated;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.7));
+        }
+        
+        .info-section {
+            width: 100%;
+            margin-top: 10px;
+            text-align: left;
+            background: rgba(3, 7, 18, 0.9);
+            padding: 10px;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 0.88em;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .type-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin: 2px;
+            font-size: 0.78em;
+            text-transform: uppercase;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+        }
+        
+        .ability-text {
+            color: #fbbf24;
+            font-style: italic;
+            font-size: 0.85em;
+            display: block;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+
+    <nav class="sticky top-0 z-40 glass-panel px-4 md:px-8 py-3">
+        <div class="max-w-[1850px] mx-auto flex flex-col lg:flex-row items-center justify-between gap-4 relative z-10">
+            
+            <div class="flex items-center gap-3">
+                <div class="relative group cursor-pointer">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-red-600 via-amber-500 to-yellow-400 flex items-center justify-center shadow-lg shadow-red-600/30 group-hover:scale-105 transition duration-300">
+                        <i class="fa-solid fa-cat text-slate-950 text-2xl group-hover:rotate-12 transition"></i>
+                    </div>
+                    <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                    </span>
+                </div>
+                <div class="text-left">
+                    <div class="flex items-center gap-2">
+                        <span class="font-orbitron font-black text-2xl tracking-wider text-white">
+                            Estra<span class="text-red-500">GAtO</span>
+                        </span>
+                        <span class="bg-red-500/10 border border-red-500/30 text-red-400 text-[10px] font-bold px-2 py-0.5 rounded-full font-mono uppercase">PvP Hub</span>
+                    </div>
+                    <p class="text-[10px] text-slate-400 font-semibold tracking-widest uppercase flex items-center gap-1 m-0">
+                        <i class="fa-solid fa-gamepad text-amber-400"></i> PokeMMO Calculator & Strategy
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center bg-slate-950/90 p-1.5 rounded-2xl border border-slate-800/80 shadow-inner gap-2">
+                <a href="index.html" class="px-4 py-2 rounded-xl text-xs font-bold tracking-wider bg-gradient-to-r from-red-600 to-amber-600 text-white shadow-lg shadow-red-600/30 font-orbitron flex items-center gap-2">
+                    <i class="fa-solid fa-calculator"></i>
+                    <span>Index (PvP)</span>
+                </a>
+                <a href="gyms.html" class="px-4 py-2 rounded-xl text-xs font-bold tracking-wider text-slate-400 hover:text-white hover:bg-slate-900 font-orbitron flex items-center gap-2 transition">
+                    <i class="fa-solid fa-trophy"></i>
+                    <span>Gyms Tracker</span>
+                </a>
+            </div>
+
+        </div>
+    </nav>
+
+    <h1>🔴 PokeMMO PvP Aleatorio 🔴</h1>
+
+    <datalist id="pokemon-list"></datalist>
+
+    <div class="main-container">
+        <div class="team-container" id="ally-team">
+            <h2 class="team-title" style="color: #6390F0;">🛡️ Tu Equipo</h2>
+        </div>
+
+        <div class="team-container" id="rival-team">
+            <h2 class="team-title" style="color: #A9A9A9;">⚔️ Equipo Rival</h2>
+        </div>
+    </div>
+
+    <script>
+        const bgCanvas = document.getElementById('bgCanvas');
+        const ctx = bgCanvas.getContext('2d');
+        let particles = [];
+        const numParticles = 55;
+
+        function resizeCanvas() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * bgCanvas.width;
+                this.y = Math.random() * bgCanvas.height;
+                this.radius = Math.random() * 2 + 0.8;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = - (Math.random() * 0.5 + 0.2);
+                this.alpha = Math.random() * 0.5 + 0.2;
+                this.color = Math.random() > 0.4 ? '255, 59, 59' : '251, 191, 36';
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.y < 0 || this.x < 0 || this.x > bgCanvas.width) {
+                    this.reset();
+                    this.y = bgCanvas.height;
+                }
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${this.color}, ${this.alpha})`;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = `rgba(${this.color}, 0.8)`;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < numParticles; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+
+        const tiposES = {
+            normal: { nombre: "Normal", color: "#A8A77A" }, fire: { nombre: "Fuego", color: "#EE8130" },
+            water: { nombre: "Agua", color: "#6390F0" }, electric: { nombre: "Eléctrico", color: "#F7D02C" },
+            grass: { nombre: "Planta", color: "#7AC74C" }, ice: { nombre: "Hielo", color: "#96D9D6" },
+            fighting: { nombre: "Lucha", color: "#C22E28" }, poison: { nombre: "Veneno", color: "#A33EA1" },
+            ground: { nombre: "Tierra", color: "#E2BF65" }, flying: { nombre: "Volador", color: "#A98FF3" },
+            psychic: { nombre: "Psíquico", color: "#F95587" }, bug: { nombre: "Bicho", color: "#A6B91A" },
+            rock: { nombre: "Roca", color: "#B6A136" }, ghost: { nombre: "Fantasma", color: "#735797" },
+            dragon: { nombre: "Dragón", color: "#6F35FC" }, dark: { nombre: "Siniestro", color: "#705848" },
+            steel: { nombre: "Acero", color: "#B7B7CE" }, fairy: { nombre: "Hada", color: "#D685AD" }
+        };
+
+        const inmunidadesHabilidad = {
+            "levitate": { tipo: "ground", nombre: "Levitación" },
+            "flash-fire": { tipo: "fire", nombre: "Absorbe Fuego" },
+            "water-absorb": { tipo: "water", nombre: "Absorbe Agua" },
+            "dry-skin": { tipo: "water", nombre: "Piel Seca" },
+            "storm-drain": { tipo: "water", nombre: "Colector" },
+            "volt-absorb": { tipo: "electric", nombre: "Absorbe Elec." },
+            "motor-drive": { tipo: "electric", nombre: "Electromotor" },
+            "lightning-rod": { tipo: "electric", nombre: "Pararrayos" },
+            "sap-sipper": { tipo: "grass", nombre: "Herbívoro" },
+            "earth-eater": { tipo: "ground", nombre: "Geofagia" }
+        };
+
+        async function cargarNombresPokemon() {
+            try {
+                const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1000');
+                const data = await res.json();
+                const datalist = document.getElementById('pokemon-list');
+                
+                data.results.forEach(poke => {
+                    const option = document.createElement('option');
+                    option.value = poke.name;
+                    datalist.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error cargando lista de autocompletado", error);
+            }
+        }
+
+        function initCards() {
+            const allyContainer = document.getElementById('ally-team');
+            const rivalContainer = document.getElementById('rival-team');
+
+            for (let i = 1; i <= 4; i++) {
+                allyContainer.innerHTML += createCardHTML(`ally-${i}`);
+                rivalContainer.innerHTML += createCardHTML(`rival-${i}`);
+            }
+        }
+
+        function createCardHTML(id) {
+            return `
+                <div class="card" id="card-${id}">
+                    <div class="search-area">
+                        <input type="text" id="input-${id}" list="pokemon-list" placeholder="Pokémon ${id.split('-')[1]}..." onkeypress="handleEnter(event, '${id}')">
+                        <button onclick="buscarPokemon('${id}')">Buscar</button>
+                    </div>
+                    <div id="result-${id}" style="width: 100%; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <span style="color:#666;">Sin datos</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleEnter(e, id) {
+            if (e.key === 'Enter') {
+                buscarPokemon(id);
+            }
+        }
+
+        async function buscarPokemon(id) {
+            const inputName = document.getElementById(`input-${id}`).value.toLowerCase().trim();
+            const resultDiv = document.getElementById(`result-${id}`);
+            
+            if (!inputName) return;
+            resultDiv.innerHTML = "<p style='color:#fff;'>Buscando...</p>";
+
+            try {
+                const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${inputName}`);
+                if (!res.ok) throw new Error("No encontrado");
+                const data = await res.json();
+
+                const img = data.sprites.front_default || '';
+                const tipos = data.types.map(t => t.type.name);
+                
+                const habilidades = data.abilities.map(a => a.ability.name);
+                let inmunidadesDetectadas = [];
+
+                habilidades.forEach(hab => {
+                    if (inmunidadesHabilidad[hab]) {
+                        if (!inmunidadesDetectadas.some(i => i.nombre === inmunidadesHabilidad[hab].nombre)) {
+                            inmunidadesDetectadas.push(inmunidadesHabilidad[hab]);
+                        }
+                    }
+                });
+
+                let contadorDebilidades = {};
+                let resistenciasSet = new Set();
+                
+                let inmunidadesNaturalesSet = new Set();
+                let inmunidadesHabilidadSet = new Set();
+
+                for (let t of data.types) {
+                    const typeRes = await fetch(t.type.url);
+                    const typeData = await typeRes.json();
+                    
+                    typeData.damage_relations.double_damage_from.forEach(td => {
+                        contadorDebilidades[td.name] = (contadorDebilidades[td.name] || 0) + 1;
+                    });
+                    
+                    typeData.damage_relations.half_damage_from.forEach(td => resistenciasSet.add(td.name));
+                    typeData.damage_relations.no_damage_from.forEach(td => inmunidadesNaturalesSet.add(td.name));
+                }
+
+                inmunidadesDetectadas.forEach(h => {
+                    inmunidadesHabilidadSet.add(h.tipo);
+                });
+
+                let debilidadesX2 = [];
+                let debilidadesX4 = [];
+
+                for (let tipo in contadorDebilidades) {
+                    if (!resistenciasSet.has(tipo) && !inmunidadesNaturalesSet.has(tipo) && !inmunidadesHabilidadSet.has(tipo)) {
+                        if (contadorDebilidades[tipo] === 2) {
+                            debilidadesX4.push(tipo); 
+                        } else {
+                            debilidadesX2.push(tipo); 
+                        }
+                    }
+                }
+
+                let inmunidadesReales = [...inmunidadesNaturalesSet];
+
+                let debilidadesX2HTML = debilidadesX2.length > 0 
+                    ? debilidadesX2.map(w => '<span class="type-badge" style="background:' + (tiposES[w]?.color || '#8b0000') + ';">' + (tiposES[w]?.nombre || w) + '</span>').join('')
+                    : '<span style="font-size:0.9em; color:#aaa;">Ninguna</span>';
+
+                let inmunidadesRealesHTML = inmunidadesReales.length > 0 
+                    ? inmunidadesReales.map(i => '<span class="type-badge" style="background:' + (tiposES[i]?.color || '#444') + '; color: #fff; border: 1px dashed #00ffcc;">' + (tiposES[i]?.nombre || i) + '</span>').join('')
+                    : '<span style="font-size:0.9em; color:#aaa;">Ninguna</span>';
+
+                let html = `
+                    ${img ? `<img class="pokemon-img" src="${img}" alt="${data.name}">` : ''}
+                    <h3 style="margin: 5px 0 10px 0; font-size:1.1em;">${data.name.toUpperCase()}</h3>
+                    
+                    <div class="info-section">
+                        <strong>🛡️ Tipos:</strong><br>
+                        ${tipos.map(t => `<span class="type-badge" style="background:${tiposES[t]?.color || '#444'};">${tiposES[t]?.nombre || t}</span>`).join('')}
+                        
+                        ${inmunidadesDetectadas.map(h => `<span class="ability-text">✨ Inmune a ${tiposES[h.tipo].nombre.toUpperCase()} (por${h.nombre})</span>`).join('')}
+                    </div>
+                    
+                    ${debilidadesX4.length > 0 ? `
+                    <div class="info-section" style="border-left: 4px solid #ff0000; background: rgba(255,0,0,0.1);">
+                        <strong>☠️ Daño Crítico (x4):</strong><br>
+                        ${debilidadesX4.map(w => `<span class="type-badge" style="background:${tiposES[w]?.color || '#8b0000'}; border: 1px solid white;">${tiposES[w]?.nombre || w}</span>`).join('')}
+                    </div>` : ''}
+
+                    <div class="info-section">
+                        <strong>⚠️ Recibe x2 Daño de:</strong><br>
+                        ${debilidadesX2HTML}
+                    </div>
+
+                    <div class="info-section" style="border-left: 4px solid #00ffcc; background: rgba(0,255,204,0.05);">
+                        <strong>🚫 Inmune a:</strong><br>
+                        ${inmunidadesRealesHTML}
+                    </div>
+                `;
+                resultDiv.innerHTML = html;
+
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color:#ff6b6b; font-size:0.9em;">❌ Error: Escribe bien el nombre.</p>`;
+            }
+        }
+
+        window.onload = () => {
+            initCards();
+            cargarNombresPokemon();
+        };
+    </script>
+</body>
+</html>
