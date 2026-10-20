@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeMMO PvP - Calculadora de Eventos</title>
+    <title>PokeMMO PvP - Calculadora de Eventos & Estrategia</title>
+
     <!-- FontAwesome icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Chakra+Petch:wght@600;700&display=swap" rel="stylesheet">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -26,18 +29,22 @@
                     },
                     fontFamily: {
                         orbitron: ['Orbitron', 'sans-serif'],
+                        chakra: ['Chakra Petch', 'sans-serif'],
                         sans: ['Plus Jakarta Sans', 'sans-serif']
                     }
                 }
             }
         }
     </script>
+
     <style>
         :root {
             --bg-color: #030712;
             --panel-bg: rgba(11, 19, 41, 0.75);
             --text-color: #f1f5f9;
-            --accent-color: #ff3b3b; 
+            --accent-color: #ff3b3b;
+            --ally-color: #4f8cff;
+            --rival-color: #ff4b4b;
         }
 
         #bgCanvas {
@@ -73,7 +80,7 @@
             color: var(--text-color);
             text-align: center;
             margin: 0;
-            padding: 0 0 30px 0;
+            padding: 0 0 40px 0;
             position: relative;
             min-height: 100vh;
         }
@@ -86,44 +93,236 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
         }
 
-        h1 { 
+        /* ===== Title Header ===== */
+        .page-title { 
             font-family: 'Orbitron', sans-serif;
             color: var(--accent-color); 
-            text-shadow: 0 0 14px rgba(255, 59, 59, 0.75); 
-            margin-top: 25px;
-            margin-bottom: 25px; 
+            text-shadow: 0 0 18px rgba(255, 59, 59, 0.75); 
             font-size: 2.2rem;
             font-weight: 900;
             letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin: 25px 0;
             position: relative;
             z-index: 10;
         }
-        
+
+        /* ===== Animated Pokeballs ===== */
+        .pokeball {
+            position: relative;
+            flex-shrink: 0;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: 3.5px solid #0d0d0d;
+            background: linear-gradient(
+                #ee3b3b 0 calc(50% - 3px),
+                #0d0d0d calc(50% - 3px) calc(50% + 3px),
+                #f5f5f5 calc(50% + 3px) 100%
+            );
+            box-shadow: 0 0 18px rgba(255,59,59,.6), inset -5px -5px 0 rgba(0,0,0,.2);
+            transform-origin: 50% 90%;
+            animation: pokeball-shake 3s ease-in-out infinite;
+        }
+        .pokeball::before {
+            content: "";
+            position: absolute;
+            top: 4px;
+            left: 7px;
+            width: 10px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.6);
+            transform: rotate(-30deg);
+        }
+        .pokeball::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 3.5px solid #0d0d0d;
+            background: #f5f5f5;
+            transform: translate(-50%, -50%);
+            animation: pokeball-blink 3s ease-in-out infinite;
+        }
+        .pokeball.delay { animation-delay: .5s; }
+        .pokeball.delay::after { animation-delay: .5s; }
+
+        @keyframes pokeball-shake {
+            0%, 58%  { transform: rotate(0deg); }
+            63%      { transform: rotate(-22deg); }
+            70%      { transform: rotate(20deg); }
+            77%      { transform: rotate(-14deg); }
+            84%      { transform: rotate(9deg); }
+            91%, 100%{ transform: rotate(0deg); }
+        }
+        @keyframes pokeball-blink {
+            0%, 58%  { background: #f5f5f5; box-shadow: none; }
+            62%, 88% { background: #ffe27a; box-shadow: 0 0 12px 3px #ffd54a; }
+            94%, 100%{ background: #f5f5f5; box-shadow: none; }
+        }
+
+        /* ===== Main Layout ===== */
+        .layout {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+            padding: 0 20px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        /* ===== Clear Buttons ===== */
+        .btn-clear {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            padding: 5px 10px;
+            background: rgba(185, 28, 28, 0.8);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fff;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 2;
+        }
+        .btn-clear:hover {
+            background: #dc2626;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+            transform: scale(1.05);
+        }
+
+        /* ===== Sidebar (Mi Lista) ===== */
+        .sidebar {
+            position: sticky;
+            top: 80px;
+            width: 290px;
+            max-height: calc(100vh - 100px);
+            display: flex;
+            flex-direction: column;
+            background: rgba(11, 19, 41, 0.85);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 59, 59, 0.4);
+            border-radius: 18px;
+            padding: 16px;
+            box-shadow: 0 0 30px rgba(255, 59, 59, 0.15), 0 10px 30px rgba(0,0,0,0.6);
+            flex-shrink: 0;
+        }
+        .sidebar h2 { 
+            margin: 0 0 2px 0; 
+            font-family: 'Orbitron', sans-serif; 
+            font-size: 1.25em; 
+            color: var(--accent-color); 
+            text-shadow: 0 0 10px rgba(255, 59, 59, 0.5);
+        }
+        .sidebar .counter { font-size: 0.8em; color: #94a3b8; margin-bottom: 10px; font-weight: 600; }
+        .sidebar .add-area { display: flex; gap: 6px; margin-bottom: 8px; }
+        .sidebar .hint { font-size: 0.75em; color: #64748b; margin: 0 0 10px 0; text-align: center; }
+
+        .poke-list {
+            list-style: none;
+            margin: 0;
+            padding: 0 4px 0 0;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            text-align: left;
+        }
+        .poke-list li.empty { color: #64748b; font-size: 0.85em; text-align: center; padding: 30px 0; }
+
+        .poke-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 4px 8px 4px 4px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeIn 0.3s ease;
+        }
+        .poke-item:hover { 
+            border-color: rgba(255, 59, 59, 0.6); 
+            transform: translateX(3px); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        .poke-item img { width: 42px; height: 42px; image-rendering: pixelated; flex-shrink: 0; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+        .poke-item .name { flex: 1; font-size: 0.85em; font-weight: 700; text-transform: capitalize; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #f1f5f9; }
+
+        .poke-item .send,
+        .poke-item .remove {
+            padding: 4px 8px;
+            font-size: 0.8em;
+            line-height: 1;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s;
+        }
+        .poke-item .send.ally { background: #2563eb; color: white; }
+        .poke-item .send.ally:hover { background: #3b82f6; transform: scale(1.08); }
+        .poke-item .send.rival { background: #991b1b; color: white; }
+        .poke-item .send.rival:hover { background: #dc2626; transform: scale(1.08); }
+        .poke-item .remove {
+            background: transparent;
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            margin-left: 2px;
+        }
+        .poke-item .remove:hover { background: #ef4444; color: #fff; }
+
+        .toast {
+            font-size: 0.8em;
+            min-height: 1.2em;
+            margin-top: 8px;
+            color: #fbbf24;
+            font-weight: 600;
+        }
+
+        /* ===== Teams Section ===== */
         .main-container {
             display: flex;
             justify-content: center;
             gap: 20px;
             flex-wrap: wrap;
-            position: relative;
-            z-index: 10;
-            padding: 0 15px;
+            flex: 1;
+            min-width: 300px;
         }
-        
+
         .team-container {
+            position: relative;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 15px;
             width: 100%;
             max-width: 700px;
-            border: 1px solid rgba(255, 59, 59, 0.3);
             border-radius: 20px;
-            padding: 20px;
+            padding: 24px 20px 20px 20px;
             background-color: rgba(11, 19, 41, 0.75);
             backdrop-filter: blur(12px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
         }
-        
+        #ally-team {
+            border: 1px solid rgba(79, 140, 255, 0.4);
+            box-shadow: 0 0 25px rgba(79, 140, 255, 0.15), 0 8px 32px rgba(0, 0, 0, 0.6);
+        }
+        #rival-team {
+            border: 1px solid rgba(255, 75, 75, 0.4);
+            box-shadow: 0 0 25px rgba(255, 75, 75, 0.15), 0 8px 32px rgba(0, 0, 0, 0.6);
+        }
+
         .team-title {
             width: 100%;
             margin-top: 0;
@@ -131,10 +330,12 @@
             font-size: 1.5em;
             font-family: 'Orbitron', sans-serif;
             font-weight: 800;
+            text-shadow: 0 0 10px currentColor;
         }
 
+        /* ===== Card Design ===== */
         .card {
-            background-color: rgba(15, 23, 42, 0.65);
+            background-color: rgba(15, 23, 42, 0.75);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 14px;
@@ -146,12 +347,14 @@
             align-items: center;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
         .card:hover {
-            border-color: rgba(255, 59, 59, 0.5);
-            box-shadow: 0 10px 30px -5px rgba(255, 59, 59, 0.25), 0 0 15px rgba(251, 191, 36, 0.1);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px -5px rgba(0,0,0,0.7);
         }
+        #ally-team .card { border-top: 3px solid var(--ally-color); }
+        #ally-team .card:hover { border-color: rgba(79, 140, 255, 0.6); box-shadow: 0 10px 25px -5px rgba(79, 140, 255, 0.3); }
+        #rival-team .card { border-top: 3px solid var(--rival-color); }
+        #rival-team .card:hover { border-color: rgba(255, 75, 75, 0.6); box-shadow: 0 10px 25px -5px rgba(255, 75, 75, 0.3); }
 
         .search-area {
             display: flex;
@@ -165,19 +368,19 @@
             width: 100%;
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(3, 7, 18, 0.8);
+            background: rgba(3, 7, 18, 0.85);
             color: white;
             font-size: 0.9rem;
             outline: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             transition: all 0.2s;
         }
-
         input:focus {
             border-color: #ff3b3b;
-            box-shadow: 0 0 10px rgba(255, 59, 59, 0.3);
+            box-shadow: 0 0 10px rgba(255, 59, 59, 0.35);
         }
-        
-        button {
+
+        button.btn-search {
             padding: 9px 14px;
             background: linear-gradient(135deg, #ff3b3b, #f59e0b);
             color: white;
@@ -189,19 +392,20 @@
             box-shadow: 0 4px 12px rgba(255, 59, 59, 0.3);
             transition: all 0.2s ease;
         }
-
-        button:hover { 
+        button.btn-search:hover { 
             filter: brightness(1.2);
             transform: scale(1.03);
         }
-        
+        button.btn-search:active { transform: scale(0.96); }
+
         .pokemon-img {
             width: 120px;
             height: 120px;
             image-rendering: pixelated;
-            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.7));
+            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.7));
+            animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        
+
         .info-section {
             width: 100%;
             margin-top: 10px;
@@ -212,8 +416,9 @@
             box-sizing: border-box;
             font-size: 0.88em;
             border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: fadeIn 0.3s ease;
         }
-        
+
         .type-badge {
             display: inline-block;
             padding: 4px 8px;
@@ -226,7 +431,7 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
             box-shadow: 0 2px 5px rgba(0,0,0,0.4);
         }
-        
+
         .ability-text {
             color: #fbbf24;
             font-style: italic;
@@ -234,12 +439,35 @@
             display: block;
             margin-top: 5px;
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.7); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* ===== Responsive Design ===== */
+        @media (max-width: 900px) {
+            .layout { flex-direction: column; align-items: center; }
+            .sidebar { width: 100%; position: static; max-height: 400px; }
+            .page-title { font-size: 1.6rem; gap: 10px; }
+            .pokeball { width: 36px; height: 36px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; transition: none !important; }
+        }
     </style>
 </head>
 <body>
 
+    <!-- Particle Canvas Background -->
     <canvas id="bgCanvas"></canvas>
 
+    <!-- Top Navigation Header -->
     <nav class="sticky top-0 z-40 glass-panel px-4 md:px-8 py-3">
         <div class="max-w-[1850px] mx-auto flex flex-col lg:flex-row items-center justify-between gap-4 relative z-10">
             
@@ -280,21 +508,46 @@
         </div>
     </nav>
 
-    <h1>🔴 PokeMMO PvP Aleatorio 🔴</h1>
+    <!-- Main Title with Animated Pokeballs -->
+    <h1 class="page-title">
+        <span class="pokeball" aria-hidden="true"></span>
+        <span>PokeMMO PvP Aleatorio</span>
+        <span class="pokeball delay" aria-hidden="true"></span>
+    </h1>
 
     <datalist id="pokemon-list"></datalist>
 
-    <div class="main-container">
-        <div class="team-container" id="ally-team">
-            <h2 class="team-title" style="color: #6390F0;">🛡️ Tu Equipo</h2>
-        </div>
+    <div class="layout">
+        <!-- Sidebar: Mi Lista -->
+        <aside class="sidebar">
+            <button class="btn-clear" title="Limpiar toda la lista" onclick="limpiarLista()"><i class="fa-solid fa-trash-can"></i></button>
+            <h2>📋 Mi lista</h2>
+            <div class="counter" id="list-counter">0 / 15</div>
+            <div class="add-area">
+                <input type="text" id="list-input" list="pokemon-list" placeholder="Añadir Pokémon..." onkeypress="if(event.key==='Enter') agregarALista()">
+                <button class="btn-search" onclick="agregarALista()"><i class="fa-solid fa-plus"></i></button>
+            </div>
+            <p class="hint">🛡️ = Tu equipo &nbsp; ⚔️ = Rival &nbsp; ✕ = Quitar</p>
+            <ul class="poke-list" id="poke-list"></ul>
+            <div class="toast" id="toast"></div>
+        </aside>
 
-        <div class="team-container" id="rival-team">
-            <h2 class="team-title" style="color: #A9A9A9;">⚔️ Equipo Rival</h2>
+        <!-- Main Cards Container: Equipos -->
+        <div class="main-container">
+            <div class="team-container" id="ally-team">
+                <button class="btn-clear" title="Limpiar Tu Equipo" onclick="limpiarEquipo('ally')"><i class="fa-solid fa-trash-can"></i></button>
+                <h2 class="team-title" style="color: #6390F0;">🛡️ Tu Equipo</h2>
+            </div>
+
+            <div class="team-container" id="rival-team">
+                <button class="btn-clear" title="Limpiar Equipo Rival" onclick="limpiarEquipo('rival')"><i class="fa-solid fa-trash-can"></i></button>
+                <h2 class="team-title" style="color: #ff7b7b;">⚔️ Equipo Rival</h2>
+            </div>
         </div>
     </div>
 
     <script>
+        /* ===== Background Particles Animation ===== */
         const bgCanvas = document.getElementById('bgCanvas');
         const ctx = bgCanvas.getContext('2d');
         let particles = [];
@@ -353,6 +606,12 @@
         initParticles();
         animateParticles();
 
+        /* ===== Game & Calculator Logic ===== */
+        const MAX_LISTA = 15;
+        const STORAGE_KEY = 'pokemmo-pvp-lista';
+        let miLista = [];                                  // [{ name, img }]
+        const siguienteReemplazo = { ally: 0, rival: 0 };  // Para cuando se llena el equipo
+
         const tiposES = {
             normal: { nombre: "Normal", color: "#A8A77A" }, fire: { nombre: "Fuego", color: "#EE8130" },
             water: { nombre: "Agua", color: "#6390F0" }, electric: { nombre: "Eléctrico", color: "#F7D02C" },
@@ -383,7 +642,7 @@
                 const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1000');
                 const data = await res.json();
                 const datalist = document.getElementById('pokemon-list');
-                
+
                 data.results.forEach(poke => {
                     const option = document.createElement('option');
                     option.value = poke.name;
@@ -393,6 +652,122 @@
                 console.error("Error cargando lista de autocompletado", error);
             }
         }
+
+        /* ================= LISTA LATERAL (STORAGE & ACTIONS) ================= */
+
+        function guardarLista() {
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(miLista)); } catch (e) {}
+        }
+
+        function cargarLista() {
+            try {
+                const guardada = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                if (Array.isArray(guardada)) miLista = guardada.slice(0, MAX_LISTA);
+            } catch (e) {}
+        }
+
+        function mostrarAviso(texto) {
+            const t = document.getElementById('toast');
+            t.textContent = texto;
+            clearTimeout(mostrarAviso._t);
+            mostrarAviso._t = setTimeout(() => { t.textContent = ''; }, 2500);
+        }
+
+        function renderLista() {
+            const ul = document.getElementById('poke-list');
+            document.getElementById('list-counter').textContent = `${miLista.length} / ${MAX_LISTA}`;
+
+            if (miLista.length === 0) {
+                ul.innerHTML = '<li class="empty">Aún no hay Pokémon en la lista</li>';
+                return;
+            }
+
+            ul.innerHTML = '';
+            miLista.forEach((poke, idx) => {
+                const li = document.createElement('li');
+                li.className = 'poke-item';
+                li.innerHTML = `
+                    ${poke.img ? `<img src="${poke.img}" alt="${poke.name}">` : '<span style="width:42px"></span>'}
+                    <span class="name">${poke.name}</span>
+                    <button class="send ally" title="Enviar a Tu Equipo">🛡️</button>
+                    <button class="send rival" title="Enviar al Equipo Rival">⚔️</button>
+                    <button class="remove" title="Quitar de la lista">✕</button>
+                `;
+                li.querySelector('.send.ally').addEventListener('click', () => enviarAEquipo(poke.name, 'ally'));
+                li.querySelector('.send.rival').addEventListener('click', () => enviarAEquipo(poke.name, 'rival'));
+                li.querySelector('.remove').addEventListener('click', () => quitarDeLista(idx));
+                ul.appendChild(li);
+            });
+        }
+
+        async function agregarALista() {
+            const input = document.getElementById('list-input');
+            const nombre = input.value.toLowerCase().trim();
+            if (!nombre) return;
+
+            if (miLista.length >= MAX_LISTA) {
+                mostrarAviso(`Lista llena (máximo ${MAX_LISTA}). Quita uno primero.`);
+                return;
+            }
+            if (miLista.some(p => p.name === nombre)) {
+                mostrarAviso('Ese Pokémon ya está en la lista.');
+                return;
+            }
+
+            mostrarAviso('Buscando...');
+            try {
+                const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${nombre}`);
+                if (!res.ok) throw new Error("No encontrado");
+                const data = await res.json();
+
+                miLista.push({ name: data.name, img: data.sprites.front_default || '' });
+                guardarLista();
+                renderLista();
+                input.value = '';
+                mostrarAviso('');
+            } catch (e) {
+                mostrarAviso('No encontrado. Revisa el nombre.');
+            }
+        }
+
+        function quitarDeLista(idx) {
+            miLista.splice(idx, 1);
+            guardarLista();
+            renderLista();
+        }
+
+        function limpiarLista() {
+            if (miLista.length === 0) return;
+            if (!confirm('¿Quitar todos los Pokémon de la lista?')) return;
+            miLista = [];
+            guardarLista();
+            renderLista();
+        }
+
+        function limpiarEquipo(equipo) {
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`input-${equipo}-${i}`).value = '';
+                document.getElementById(`result-${equipo}-${i}`).innerHTML = '<span style="color:#64748b; font-size:0.9em;">Sin datos</span>';
+            }
+            siguienteReemplazo[equipo] = 0;
+        }
+
+        function enviarAEquipo(nombre, equipo) {
+            let slot = null;
+            for (let i = 1; i <= 4; i++) {
+                if (!document.getElementById(`input-${equipo}-${i}`).value.trim()) {
+                    slot = i;
+                    break;
+                }
+            }
+            if (slot === null) {
+                slot = (siguienteReemplazo[equipo] % 4) + 1;
+                siguienteReemplazo[equipo]++;
+            }
+            buscarPokemon(`${equipo}-${slot}`, nombre);
+        }
+
+        /* ================= CARTAS Y BÚSQUEDA ================= */
 
         function initCards() {
             const allyContainer = document.getElementById('ally-team');
@@ -409,10 +784,10 @@
                 <div class="card" id="card-${id}">
                     <div class="search-area">
                         <input type="text" id="input-${id}" list="pokemon-list" placeholder="Pokémon ${id.split('-')[1]}..." onkeypress="handleEnter(event, '${id}')">
-                        <button onclick="buscarPokemon('${id}')">Buscar</button>
+                        <button class="btn-search" onclick="buscarPokemon('${id}')">Buscar</button>
                     </div>
                     <div id="result-${id}" style="width: 100%; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <span style="color:#666;">Sin datos</span>
+                        <span style="color:#64748b; font-size:0.9em;">Sin datos</span>
                     </div>
                 </div>
             `;
@@ -424,12 +799,15 @@
             }
         }
 
-        async function buscarPokemon(id) {
-            const inputName = document.getElementById(`input-${id}`).value.toLowerCase().trim();
+        async function buscarPokemon(id, nombreForzado) {
+            const inputEl = document.getElementById(`input-${id}`);
+            if (nombreForzado) inputEl.value = nombreForzado;
+
+            const inputName = inputEl.value.toLowerCase().trim();
             const resultDiv = document.getElementById(`result-${id}`);
-            
+
             if (!inputName) return;
-            resultDiv.innerHTML = "<p style='color:#fff;'>Buscando...</p>";
+            resultDiv.innerHTML = "<p style='color:#f1f5f9; font-size:0.9em;'>Buscando...</p>";
 
             try {
                 const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${inputName}`);
@@ -438,7 +816,7 @@
 
                 const img = data.sprites.front_default || '';
                 const tipos = data.types.map(t => t.type.name);
-                
+
                 const habilidades = data.abilities.map(a => a.ability.name);
                 let inmunidadesDetectadas = [];
 
@@ -452,18 +830,17 @@
 
                 let contadorDebilidades = {};
                 let resistenciasSet = new Set();
-                
                 let inmunidadesNaturalesSet = new Set();
                 let inmunidadesHabilidadSet = new Set();
 
                 for (let t of data.types) {
                     const typeRes = await fetch(t.type.url);
                     const typeData = await typeRes.json();
-                    
+
                     typeData.damage_relations.double_damage_from.forEach(td => {
                         contadorDebilidades[td.name] = (contadorDebilidades[td.name] || 0) + 1;
                     });
-                    
+
                     typeData.damage_relations.half_damage_from.forEach(td => resistenciasSet.add(td.name));
                     typeData.damage_relations.no_damage_from.forEach(td => inmunidadesNaturalesSet.add(td.name));
                 }
@@ -478,9 +855,9 @@
                 for (let tipo in contadorDebilidades) {
                     if (!resistenciasSet.has(tipo) && !inmunidadesNaturalesSet.has(tipo) && !inmunidadesHabilidadSet.has(tipo)) {
                         if (contadorDebilidades[tipo] === 2) {
-                            debilidadesX4.push(tipo); 
+                            debilidadesX4.push(tipo);
                         } else {
-                            debilidadesX2.push(tipo); 
+                            debilidadesX2.push(tipo);
                         }
                     }
                 }
